@@ -1,5 +1,5 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 
 class Material(models.Model):
 
@@ -21,7 +21,7 @@ class Material(models.Model):
         on_delete=models.CASCADE
     )
 
-    file = models.FileField(upload_to="materials/")
+    file = CloudinaryField('file')
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

@@ -35,9 +35,10 @@
 
 <td>
 
-<a href="{{ m.file.url }}" class="btn btn-success btn-sm">
+<a href="{{ m.file.url|default:'' }}" target="_blank" class="btn btn-success btn-sm">
 View
 </a>
+
 
 <a href="/staff/delete/{{ m.id }}/" class="btn btn-danger btn-sm">
 Delete

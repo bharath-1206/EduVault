@@ -40,11 +40,13 @@ INSTALLED_APPS = [
 
 
 
+
     'accounts',
     'students',
     'staff',
     'materials',
     'academics',
+
 ]
 
 MIDDLEWARE = [
@@ -117,6 +119,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+import cloudinary
+
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -125,3 +130,18 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+INSTALLED_APPS = [
+
+    "cloudinary",
+    "cloudinary_storage",
+]
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "dahku8vh2",
+    "API_KEY": "244534977161619",
+    "API_SECRET": "YOUR_NEW_SECRET",
+}
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
