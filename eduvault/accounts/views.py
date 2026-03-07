@@ -13,3 +13,10 @@ def login_view(request):
             return render(request, "login.html", {"error": "Invalid USN"})
 
     return render(request, "login.html")
+from django.shortcuts import redirect
+
+def logout_user(request):
+
+    request.session.flush()
+
+    return redirect("/")
