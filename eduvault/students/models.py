@@ -4,7 +4,7 @@ from django.db import models
 class Student(models.Model):
     name = models.CharField(max_length=100)
     usn = models.CharField(max_length=20, unique=True)
-    branche = models.ForeignKey("academics.Branche", on_delete=models.CASCADE, blank=True, null=True)
+    branche = models.ForeignKey("academics.Branche", on_delete=models.CASCADE,  verbose_name="Branch",blank=True, null=True)
 
     def save(self, *args, **kwargs):
         branche_code = self.usn[5:7]

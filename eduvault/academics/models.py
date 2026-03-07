@@ -4,8 +4,14 @@ class Branche(models.Model):
     code = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = "Branch"
+        verbose_name_plural = "Branches"
+
     def __str__(self):
         return self.name
+
+
 class Semester(models.Model):
     number = models.IntegerField()
 
