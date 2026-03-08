@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
+    "cloudinary",
+    "cloudinary_storage",
 
 
     'accounts',
@@ -119,7 +120,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-import cloudinary
+
 
 
 
@@ -131,17 +132,27 @@ STATIC_URL = 'static/'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-INSTALLED_APPS = [
 
-    "cloudinary",
-    "cloudinary_storage",
-]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": "dahku8vh2",
     "API_KEY": "244534977161619",
-    "API_SECRET": "YOUR_NEW_SECRET",
+    "API_SECRET": "ezYSs_GH4EspaLjNA14Tkqrha0g",
 }
-
+CLOUDINARY_URL = "cloudinary://244534977161619:ezYSs_GH4EspaLjNA14Tkqrha0g@dahku8vh2"
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name="dahku8vh2",
+    api_key="244534977161619",
+    api_secret="ezYSs_GH4EspaLjNA14Tkqrha0g"
+)
+
+
 

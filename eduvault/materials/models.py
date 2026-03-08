@@ -21,7 +21,7 @@ class Material(models.Model):
         on_delete=models.CASCADE
     )
 
-    file = CloudinaryField('file')
+    file = CloudinaryField('file', resource_type='raw')
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

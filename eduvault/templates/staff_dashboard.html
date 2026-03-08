@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div class="container mt-5">
+
 <div class="card shadow p-4">
 
 <h3>Upload Study Material</h3>
@@ -35,10 +37,13 @@
 
 <td>
 
-<a href="{{ m.file.url|default:'' }}" target="_blank" class="btn btn-success btn-sm">
+{% if m.file %}
+<a href="{{ m.file.url }}" target="_blank" class="btn btn-success btn-sm">
 View
 </a>
-
+{% else %}
+<span class="text-danger">No File</span>
+{% endif %}
 
 <a href="/staff/delete/{{ m.id }}/" class="btn btn-danger btn-sm">
 Delete
@@ -48,11 +53,23 @@ Delete
 
 </tr>
 
+{% empty %}
+
+<tr>
+<td colspan="4" class="text-center text-muted">
+No materials uploaded yet
+</td>
+</tr>
+
 {% endfor %}
 
 </tbody>
 
 </table>
+
+<hr>
+
+<h4 class="mt-4">Upload New Material</h4>
 
 <form action="/staff/upload/" method="POST" enctype="multipart/form-data">
 
@@ -92,6 +109,9 @@ Upload Material
 </form>
 
 </div>
+
+</div>
+
 
 <script>
 
