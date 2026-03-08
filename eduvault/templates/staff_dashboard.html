@@ -2,19 +2,23 @@
 
 {% block content %}
 
-<div class="container mt-5">
 
-<div class="card shadow p-4">
 
-<h3>Upload Study Material</h3>
+<div class="col-md-10 p-4">
+
+<h3>Staff Dashboard</h3>
+
+<p class="text-muted">
+Manage and upload study materials
+</p>
 
 <hr>
 
 <h4>Uploaded Materials</h4>
 
-<table class="table table-bordered mt-3">
+<table class="table table-hover mt-3">
 
-<thead>
+<thead class="table-dark">
 <tr>
 <th>Title</th>
 <th>Subject</th>
@@ -37,16 +41,12 @@
 
 <td>
 
-{% if m.file %}
 <a href="{{ m.file.url }}" target="_blank" class="btn btn-success btn-sm">
-View
+<i class="bi bi-eye"></i> View
 </a>
-{% else %}
-<span class="text-danger">No File</span>
-{% endif %}
 
 <a href="/staff/delete/{{ m.id }}/" class="btn btn-danger btn-sm">
-Delete
+<i class="bi bi-trash"></i> Delete
 </a>
 
 </td>
@@ -69,17 +69,17 @@ No materials uploaded yet
 
 <hr>
 
-<h4 class="mt-4">Upload New Material</h4>
+<h4 class="mt-4" id="upload-section">Upload New Material</h4>
 
-<form action="/staff/upload/" method="POST" enctype="multipart/form-data">
+<form id="upload-form" action="/staff/upload/" method="POST" enctype="multipart/form-data">
 
 {% csrf_token %}
 
 <input type="text"
-       name="title"
-       class="form-control mb-3"
-       placeholder="Material Title"
-       required>
+name="title"
+class="form-control mb-3"
+placeholder="Material Title"
+required>
 
 <select name="semester" id="semester-dropdown" class="form-control mb-3">
 
@@ -98,9 +98,9 @@ No materials uploaded yet
 </select>
 
 <input type="file"
-       name="file"
-       class="form-control mb-3"
-       required>
+name="file"
+class="form-control mb-3"
+required>
 
 <button class="btn btn-primary">
 Upload Material
@@ -109,42 +109,5 @@ Upload Material
 </form>
 
 </div>
-
-</div>
-
-
-<script>
-
-document.getElementById("semester-dropdown").addEventListener("change", function(){
-
-    var semesterId = this.value
-    var branchId = "{{ staff.branch.id }}"
-
-    fetch(`/staff/get-subjects/?semester=${semesterId}&branch=${branchId}`)
-
-    .then(response => response.json())
-
-    .then(data => {
-
-        var subjectDropdown = document.getElementById("subject-dropdown")
-
-        subjectDropdown.innerHTML = ""
-
-        data.forEach(function(subject){
-
-            var option = document.createElement("option")
-
-            option.value = subject.id
-            option.text = subject.name
-
-            subjectDropdown.appendChild(option)
-
-        })
-
-    })
-
-})
-
-</script>
 
 {% endblock %}
