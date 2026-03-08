@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+import  os
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-fgvy-!1065+abc9-tlb)c5pcf7cpm0v0%mqlexg6m0l&&-5ag!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -138,9 +140,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "dahku8vh2",
-    "API_KEY": "244534977161619",
-    "API_SECRET": "ezYSs_GH4EspaLjNA14Tkqrha0g",
+    "CLOUD_NAME": os.getenv("CLOUD_NAME"),
+    "API_KEY": os.getenv("API_KEY"),
+    "API_SECRET": os.getenv("API_SECRET"),
 }
 CLOUDINARY_URL = "cloudinary://244534977161619:ezYSs_GH4EspaLjNA14Tkqrha0g@dahku8vh2"
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
@@ -149,9 +151,9 @@ DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 import cloudinary
 
 cloudinary.config(
-    cloud_name="dahku8vh2",
-    api_key="244534977161619",
-    api_secret="ezYSs_GH4EspaLjNA14Tkqrha0g"
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
 
 
