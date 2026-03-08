@@ -1,1 +1,1 @@
-web: gunicorn eduvault.wsgi:application
+web: gunicorn eduvault.wsgi
