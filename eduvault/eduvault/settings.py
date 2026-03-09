@@ -85,12 +85,9 @@ WSGI_APPLICATION = 'eduvault.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+import dj_database_url
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+ 'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
 }
 
 
@@ -153,9 +150,9 @@ DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 import cloudinary
 
 cloudinary.config(
-    cloud_name=os.getenv("dahku8vh2"),
-    api_key=os.getenv("244534977161619"),
-    api_secret=os.getenv("ezYSs_GH4EspaLjNA14Tkqrha0g"),
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
 
 
