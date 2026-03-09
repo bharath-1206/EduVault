@@ -153,9 +153,9 @@ DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 import cloudinary
 
 cloudinary.config(
-    cloud_name=os.getenv("CLOUD_NAME"),
-    api_key=os.getenv("API_KEY"),
-    api_secret=os.getenv("API_SECRET"),
+    cloud_name=os.getenv("dahku8vh2"),
+    api_key=os.getenv("244534977161619"),
+    api_secret=os.getenv("ezYSs_GH4EspaLjNA14Tkqrha0g"),
 )
 
 
