@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import  os
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 SECRET_KEY = 'django-insecure-fgvy-!1065+abc9-tlb)c5pcf7cpm0v0%mqlexg6m0l&&-5ag!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -149,22 +149,25 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
+import  os
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.getenv("CLOUD_NAME"),
-    "API_KEY": os.getenv("API_KEY"),
-    "API_SECRET": os.getenv("API_SECRET"),
+    "CLOUD_NAME": "dahku8vh2",
+    "API_KEY": "244534977161619",
+    "API_SECRET": "ezYSs_GH4EspaLjNA14Tkqrha0g",
 }
 CLOUDINARY_URL = "cloudinary://244534977161619:ezYSs_GH4EspaLjNA14Tkqrha0g@dahku8vh2"
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 
 cloudinary.config(
-    cloud_name=os.getenv("CLOUD_NAME"),
-    api_key=os.getenv("API_KEY"),
-    api_secret=os.getenv("API_SECRET"),
+    cloud_name="dahku8vh2",
+    api_key="244534977161619",
+    api_secret="ezYSs_GH4EspaLjNA14Tkqrha0g",
 )
 
 

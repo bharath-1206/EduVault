@@ -53,16 +53,29 @@ box-shadow:0 4px 10px rgba(0,0,0,0.05);
 <div class="container-fluid">
 
 <span class="navbar-brand">
-EduVault |  Rajarajeswari College of Engineering
+EduVault |  Rajarajeswari College of Engineering (An Autonomous Institution)
 </span>
+<div class="d-flex gap-2">
 
-<a href="/logout/" class="btn btn-danger btn-sm">
-<i class="bi bi-box-arrow-right"></i> Logout
-</a>
+    <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown">
+            Help
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end p-3">
+            <li><strong>Name:</strong> Mohan Gowda B L ,  Bharath M</li>
+            <li><strong>Branch:</strong> {{ student.branche.name }}</li>
+            <li><strong>College:</strong> Rajarajeswari College of Engineering</li>
+            <li><strong>Email:</strong> mohanrgbl6629@gmail.com</li>
+        </ul>
+    </div>
+
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
 
 </div>
+</div>
 </nav>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <div class="container-fluid">
 <div class="row">
 
