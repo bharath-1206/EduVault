@@ -9,7 +9,26 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import os
+import django
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'EduVault.settings')
+django.setup()
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+ADMIN_USERNAME = "mohan"
+ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = "mohanrgbl6629@gmail.com"
+
+if not User.objects.filter(username=ADMIN_USERNAME).exists():
+    User.objects.create_superuser(
+        username=ADMIN_USERNAME,
+        email=ADMIN_EMAIL,
+        password=ADMIN_PASSWORD
+    )
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,9 +170,9 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 import  os
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "dahku8vh2",
-    "API_KEY": "244534977161619",
-    "API_SECRET": "ezYSs_GH4EspaLjNA14Tkqrha0g",
+    "CLOUD_NAME":os.getenv("CLOUD_NAME"),
+    "API_KEY": os.getenv("API_KEY"),
+    "API_SECRET": os.getenv("API_SECRET"),
 }
 CLOUDINARY_URL = "cloudinary://244534977161619:ezYSs_GH4EspaLjNA14Tkqrha0g@dahku8vh2"
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
@@ -165,9 +184,9 @@ import cloudinary.api
 
 
 cloudinary.config(
-    cloud_name="dahku8vh2",
-    api_key="244534977161619",
-    api_secret="ezYSs_GH4EspaLjNA14Tkqrha0g",
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
 
 

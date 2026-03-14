@@ -1,27 +1,22 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
 
+from django.db import models
+from academics.models import Subject
+
+
+
+
+
 class Material(models.Model):
+
+
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     title = models.CharField(max_length=200)
 
-    branche = models.ForeignKey(
-        "academics.Branche",
-        on_delete=models.CASCADE,
-    verbose_name = "Branch"
-    )
-
-    semester = models.ForeignKey(
-        "academics.Semester",
-        on_delete=models.CASCADE
-    )
-
-    subject = models.ForeignKey(
-        "academics.Subject",
-        on_delete=models.CASCADE
-    )
-
-    file = CloudinaryField('file', resource_type='raw')
+    file = models.FileField(upload_to="materials/")
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

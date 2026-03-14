@@ -2,115 +2,156 @@
 
 {% block content %}
 
-
-
 <div class="col-md-10 p-4">
-<button onclick="history.back()" class="btn btn-outline-secondary mb-3">
-← Back
-</button>
 
-<h3>Staff Dashboard</h3>
+<h3>Welcome {{ staff.name }}</h3>
 
 <p class="text-muted">
-Manage and upload study materials
+Branch: {{ staff.branch }}
 </p>
 
 <hr>
 
-<h4>Uploaded Materials</h4>
+<h4>Upload Study Material</h4>
 
-<table class="table table-hover mt-3">
+<div class="card dashboard-card p-4 mb-4">
 
-<thead class="table-dark">
-<tr>
-<th>Title</th>
-<th>Subject</th>
-<th>Semester</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for m in materials %}
-
-<tr>
-
-<td>{{ m.title }}</td>
-
-<td>{{ m.subject.name }}</td>
-
-<td>Semester {{ m.semester.number }}</td>
-
-<td>
-
-<a href="{{ m.file.url }}" target="_blank" class="btn btn-success btn-sm">
-<i class="bi bi-eye"></i> View
-</a>
-
-<a href="/staff/delete/{{ m.id }}/" class="btn btn-danger btn-sm">
-<i class="bi bi-trash"></i> Delete
-</a>
-
-</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-<td colspan="4" class="text-center text-muted">
-No materials uploaded yet
-</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-<hr>
-
-<h4 class="mt-4" id="upload-section">Upload New Material</h4>
-
-<form id="upload-form" action="/staff/upload/" method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" action="/staff/upload/">
 
 {% csrf_token %}
 
-<input type="text"
-name="title"
-class="form-control mb-3"
-placeholder="Material Title"
-required>
+<div class="mb-3">
 
-<select name="semester" id="semester-dropdown" class="form-control mb-3">
+<label>Scheme</label>
 
-{% for s in semesters %}
-<option value="{{ s.id }}">Semester {{ s.number }}</option>
+<select id="scheme" class="form-control">
+
+<option value="">Select Scheme</option>
+
+{% for scheme in schemes %}
+<option value="{{ scheme.id }}">{{ scheme.year }}</option>
 {% endfor %}
 
 </select>
 
-<select name="subject" id="subject-dropdown" class="form-control mb-3">
+</div>
 
-{% for sub in subjects %}
-<option value="{{ sub.id }}">{{ sub.name }}</option>
-{% endfor %}
+
+<div class="mb-3">
+
+<label>Subject</label>
+
+<select name="subject" id="subject" class="form-control">
+
+<option>Select Subject</option>
 
 </select>
 
-<input type="file"
-name="file"
-class="form-control mb-3"
-required>
+</div>
 
-<button class="btn btn-primary">
+
+<div class="mb-3">
+
+<label>Material Title</label>
+
+<input type="text" name="title" class="form-control" required>
+
+</div>
+
+
+<div class="mb-3">
+
+<label>Upload File</label>
+
+<input type="file" name="file" class="form-control" required>
+
+</div>
+
+
+<button class="btn btn-success">
 Upload Material
 </button>
 
 </form>
 
 </div>
+
+
+<hr>
+
+<h4>Uploaded Materials</h4>
+
+<div class="row mt-4">
+
+{% for material in materials %}
+
+<div class="col-md-3 mb-4">
+
+<div class="card dashboard-card p-3 text-center">
+
+<h6>{{ material.title }}</h6>
+
+<p class="text-muted">
+{{ material.subject.name }}
+</p>
+
+<a href="{{ material.file.url }}"
+class="btn btn-primary btn-sm mt-2"
+target="_blank">
+
+View File
+
+</a>
+
+<a href="/staff/delete/{{ material.id }}/"
+class="btn btn-danger btn-sm mt-2">
+
+Delete
+
+</a>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p class="text-muted">No materials uploaded yet.</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+
+<script>
+
+document.getElementById("scheme").addEventListener("change", function(){
+
+const schemeId = this.value;
+
+fetch(`/staff/get-subjects/?scheme=${schemeId}`)
+
+.then(response => response.json())
+
+.then(data => {
+
+let subjectSelect = document.getElementById("subject");
+
+subjectSelect.innerHTML = "";
+
+data.forEach(subject => {
+
+subjectSelect.innerHTML +=
+`<option value="${subject.id}">${subject.name}</option>`;
+
+});
+
+});
+
+});
+
+</script>
 
 {% endblock %}

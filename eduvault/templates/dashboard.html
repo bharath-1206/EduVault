@@ -2,35 +2,111 @@
 
 {% block content %}
 
-
-
-
 <div class="col-md-10 p-4">
 
-<h3>Welcome {{ student.name }}</h3>
+<h3>Welcome {{ staff.name }}</h3>
 
 <p class="text-muted">
-Branch: {{ student.branche }}
+Branch: {{ staff.branch }}
 </p>
 
 <hr>
 
-<h4>Available Semesters</h4>
+<h4>Upload Study Material</h4>
+
+<div class="card p-4 mb-4">
+
+<form method="POST" enctype="multipart/form-data" action="/staff/upload/">
+
+{% csrf_token %}
+
+<div class="mb-3">
+
+<label>Scheme</label>
+
+<select id="scheme" class="form-control">
+
+<option value="">Select Scheme</option>
+
+{% for scheme in schemes %}
+<option value="{{ scheme.id }}">{{ scheme.year }}</option>
+{% endfor %}
+
+</select>
+
+</div>
+
+
+<div class="mb-3">
+
+<label>Subject</label>
+
+<select name="subject" id="subject" class="form-control">
+
+<option>Select Subject</option>
+
+</select>
+
+</div>
+
+
+<div class="mb-3">
+
+<label>Material Title</label>
+
+<input type="text" name="title" class="form-control" required>
+
+</div>
+
+
+<div class="mb-3">
+
+<label>Upload File</label>
+
+<input type="file" name="file" class="form-control" required>
+
+</div>
+
+
+<button class="btn btn-success">
+Upload Material
+</button>
+
+</form>
+
+</div>
+
+
+<hr>
+
+<h4>Uploaded Materials</h4>
 
 <div class="row mt-4">
 
-{% for i in "12345678" %}
+{% for material in materials %}
 
 <div class="col-md-3 mb-4">
 
-<div class="card dashboard-card p-4 text-center">
+<div class="card dashboard-card p-3 text-center">
 
-<h5>Semester {{ i }}</h5>
+<h6>{{ material.title }}</h6>
 
-<a href="/materials/semester/{{ i }}/{{ student.branche.id }}/"
-class="btn btn-primary btn-sm mt-3">
+<p class="text-muted">
+{{ material.subject.name }}
+</p>
 
-View Materials
+<a href="{{ material.file.url }}"
+class="btn btn-primary btn-sm mt-2"
+target="_blank">
+
+View File
+
+</a>
+
+<a href="/staff/delete/{{ material.id }}/"
+class="btn btn-danger btn-sm mt-2">
+
+Delete
 
 </a>
 
@@ -38,10 +114,44 @@ View Materials
 
 </div>
 
+{% empty %}
+
+<p class="text-muted">No materials uploaded yet.</p>
+
 {% endfor %}
 
 </div>
 
 </div>
+
+
+<script>
+
+document.getElementById("scheme").addEventListener("change", function(){
+
+const schemeId = this.value;
+
+fetch(`/staff/get-subjects/?scheme=${schemeId}`)
+
+.then(response => response.json())
+
+.then(data => {
+
+let subjectSelect = document.getElementById("subject");
+
+subjectSelect.innerHTML = "";
+
+data.forEach(subject => {
+
+subjectSelect.innerHTML +=
+`<option value="${subject.id}">${subject.name}</option>`;
+
+});
+
+});
+
+});
+
+</script>
 
 {% endblock %}

@@ -1,5 +1,24 @@
 from django.shortcuts import render
-from .models import Material
+from .models import Material,Subject
+
+def semester_subjects(request, semester_number, branch_id):
+
+    scheme_year = request.session.get("scheme")
+
+    subjects = Subject.objects.filter(
+        semester__number=semester_number,
+        branch_id=branch_id,
+        scheme__year=scheme_year
+    )
+
+    context = {
+        "subjects": subjects,
+        "semester": semester_number
+    }
+
+    return render(request, "subjects.html", context)
+
+
 
 def subject_materials(request, subject_id):
 
@@ -16,16 +35,13 @@ def subject_materials(request, subject_id):
     return render(request, "materials.html", context)
 from academics.models import Subject
 
-def semester_subjects(request, semester_number, branch_id):
+
+def student_subjects(request):
+
+    scheme_year = request.session.get("scheme")
 
     subjects = Subject.objects.filter(
-        semester__number=semester_number,
-        branch_id=branch_id
+        scheme__year=scheme_year
     )
 
-    context = {
-        "subjects": subjects,
-        "semester": semester_number
-    }
-
-    return render(request, "subjects.html", context)
+    return render(request, "subjects.html", {"subjects": subjects})

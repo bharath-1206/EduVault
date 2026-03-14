@@ -11,6 +11,12 @@ class Branche(models.Model):
     def __str__(self):
         return self.name
 
+class Scheme(models.Model):
+
+    year = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return str(self.year)
 
 class Semester(models.Model):
     number = models.IntegerField()
@@ -22,7 +28,10 @@ class Subject(models.Model):
     name = models.CharField(max_length=200)
     branch = models.ForeignKey(Branche, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-
+    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 # Create your models here.
+from django.db import models
+
+

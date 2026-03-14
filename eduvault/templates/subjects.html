@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-<html>
-<head>
+
+<meta charset="UTF-8">
 
 <title>EduVault Subjects</title>
 
@@ -15,6 +13,7 @@
 <body>
 
 <div class="container mt-5">
+
 <button onclick="history.back()" class="btn btn-outline-secondary mb-3">
 ← Back
 </button>
@@ -33,11 +32,8 @@
 
 <h5>{{ subject.name }}</h5>
 
-<a href="/materials/subject/{{ subject.id }}/"
-   class="btn btn-primary btn-sm mt-2">
-
+<a href="/materials/subject/{{ subject.id }}/" class="btn btn-primary btn-sm mt-2">
 View Materials
-
 </a>
 
 </div>
@@ -46,16 +42,19 @@ View Materials
 
 </div>
 
+{% empty %}
+
+<div class="col-12">
+<div class="alert alert-warning text-center">
+No subjects available for this scheme.
+</div>
+</div>
+
 {% endfor %}
 
 </div>
 
 </div>
-
-</body>
-</html></title>
-</head>
-<body>
 
 </body>
 </html>
