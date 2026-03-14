@@ -16,8 +16,10 @@ import cloudinary.api
 # ADMIN AUTO CREATION (KEPT SAME)
 # --------------------------------------------------
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eduvault.settings')
-django.setup()
+import dj_database_url
+import os
+
+
 
 from django.contrib.auth import get_user_model
 
@@ -118,19 +120,15 @@ TEMPLATES = [
 # DATABASE
 # --------------------------------------------------
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = {
+    "default": dj_database_url.parse(
+        os.environ["DATABASE_URL"],  # must exist
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eduvault.settings')
+django.setup()
 
 # --------------------------------------------------
 # PASSWORD VALIDATION
