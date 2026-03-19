@@ -33,10 +33,9 @@ width:420px;
 EduVault
 </h3>
 
-<p class="text-center text-muted">
-<h5> Rajarajeswari College of Engineering
-            (An Autonomous Institution)</h5>
-</p>
+<h6 class="text-center text-muted">
+Rajarajeswari College of Engineering (Autonomous)
+</h6>
 
 <hr>
 
@@ -56,7 +55,16 @@ EduVault
 name="usn"
 class="form-control mb-3"
 placeholder="Enter USN or Staff ID"
+value="{{ staff_id|default:'' }}"
 required>
+
+{% if ask_password %}
+<input type="password"
+name="password"
+class="form-control mb-3"
+placeholder="Enter Password"
+required>
+{% endif %}
 
 <button class="btn btn-primary w-100">
 Login
@@ -67,5 +75,4 @@ Login
 </div>
 
 </body>
-
 </html>
