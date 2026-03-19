@@ -1,3 +1,6 @@
+
+
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from students.models import Student
@@ -29,7 +32,6 @@ def login_view(request):
         # -------------------------------
         # Check Student Login
         # -------------------------------
-
         student = Student.objects.filter(usn=user_id).first()
 
         if student:
@@ -45,10 +47,14 @@ def login_view(request):
         # -------------------------------
         # Check Staff Login
         # -------------------------------
-
         staff = Staff.objects.filter(staff_id=user_id).first()
 
         if staff:
+
+            # ✅ NEW: CHECK ACTIVE STATUS
+            if not staff.is_active:
+                messages.error(request, "Your account is inactive. Contact admin.")
+                return render(request, "login.html")
 
             request.session["staff_id"] = staff.staff_id
 
@@ -57,7 +63,6 @@ def login_view(request):
         # -------------------------------
         # Invalid Login
         # -------------------------------
-
         messages.error(request, "Invalid USN or Staff ID")
 
     return render(request, "login.html")
