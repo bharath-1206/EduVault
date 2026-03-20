@@ -1,6 +1,6 @@
 from django.db import models
 from academics.models import Branche, Scheme
-from accounts.models import ActivityLog   # ✅ ADD THIS
+from accounts.models import ActivityLog
 
 
 class Student(models.Model):
@@ -16,32 +16,46 @@ class Student(models.Model):
         null=True
     )
 
-    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE)
+    scheme = models.ForeignKey(
+        Scheme,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
 
     def save(self, *args, **kwargs):
 
-        # ✅ Detect if new student
+        # ✅ Check if new student
         is_new = self.pk is None
 
-        # Detect scheme from USN
+        # 🔹 Detect scheme from USN
         try:
-            scheme_digits = self.usn[3:5]
-            self.scheme = int("20" + scheme_digits)
-        except:
-            pass
+            scheme_digits = self.usn[3:5]   # Example: "25"
+            scheme_year = int("20" + scheme_digits)  # 2025
 
-        # Detect branch from USN
+            scheme_obj = Scheme.objects.get(year=scheme_year)
+            self.scheme = scheme_obj
+
+        except Scheme.DoesNotExist:
+            print(f"Scheme {scheme_year} not found in DB")
+        except Exception as e:
+            print("Scheme detection error:", e)
+
+        # 🔹 Detect branch from USN
         try:
-            branch_code = self.usn[5:7]
-            branch = Branche.objects.get(code=branch_code)
-            self.branche = branch
+            branch_code = self.usn[5:7]   # Example: "IC"
+            branch_obj = Branche.objects.get(code=branch_code)
+            self.branche = branch_obj
+
         except Branche.DoesNotExist:
-            pass
+            print(f"Branch {branch_code} not found in DB")
+        except Exception as e:
+            print("Branch detection error:", e)
 
-        # Save first
+        # ✅ Save student
         super().save(*args, **kwargs)
 
-        # ✅ LOG ONLY IF NEW STUDENT
+        # ✅ Log only when new student is added
         if is_new:
             ActivityLog.objects.create(
                 user_type="admin",
