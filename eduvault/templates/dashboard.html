@@ -45,3 +45,21 @@ View Materials
 </div>
 
 {% endblock %}
+{% block scripts %}
+<script>
+    let timeout;
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            alert("Session expired. Logging out...");
+            window.location.href = "/logout/";
+        }, 30000); // 30 sec
+    }
+
+    document.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
+</script>
+{% endblock %}
