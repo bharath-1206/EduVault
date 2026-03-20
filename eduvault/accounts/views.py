@@ -6,12 +6,9 @@ from staff.models import Staff
 
 def login_view(request):
 
-    # If already logged in
-    if "student_id" in request.session:
-        return redirect("/student/")
-
-    if "staff_id" in request.session:
-        return redirect("/staff/")
+    # ✅ ALWAYS clear session when opening login page
+    if request.method == "GET":
+        request.session.flush()
 
     if request.method == "POST":
 
@@ -24,7 +21,7 @@ def login_view(request):
 
         user_id = user_id.strip()
 
-        # Clear any previous session
+        # Clear any previous session before login
         request.session.flush()
 
         # -------------------------------
@@ -36,7 +33,6 @@ def login_view(request):
 
             request.session["student_id"] = student.usn
 
-            # Store scheme if available
             if student.scheme:
                 request.session["scheme"] = student.scheme.year
 
