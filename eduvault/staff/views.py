@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Staff
 from materials.models import Material
 from academics.models import Scheme, Semester, Subject
+from accounts.models import ActivityLog
 
 import cloudinary.uploader
 
@@ -91,7 +92,11 @@ def upload_material(request):
             subject_id=subject_id,
             file=file
         )
-
+        ActivityLog.objects.create(
+            user_type="staff",
+            user_id=staff.staff_id,
+            action=f"Uploaded material: {title}"
+        )
         messages.success(request, "Material uploaded successfully.")
         return redirect("/staff/")
 
@@ -139,6 +144,11 @@ def delete_material(request, material_id):
     if material.file:
         cloudinary.uploader.destroy(material.file.public_id)
 
+    ActivityLog.objects.create(
+        user_type="staff",
+        user_id=staff.staff_id,
+        action=f"Deleted material: {material.title}"
+    )
     material.delete()
 
     return redirect("/staff/")

@@ -1,5 +1,6 @@
 from django.db import models
-from academics.models import Branche,Scheme
+from academics.models import Branche, Scheme
+from accounts.models import ActivityLog   # ✅ ADD THIS
 
 
 class Student(models.Model):
@@ -19,6 +20,9 @@ class Student(models.Model):
 
     def save(self, *args, **kwargs):
 
+        # ✅ Detect if new student
+        is_new = self.pk is None
+
         # Detect scheme from USN
         try:
             scheme_digits = self.usn[3:5]
@@ -34,7 +38,16 @@ class Student(models.Model):
         except Branche.DoesNotExist:
             pass
 
+        # Save first
         super().save(*args, **kwargs)
+
+        # ✅ LOG ONLY IF NEW STUDENT
+        if is_new:
+            ActivityLog.objects.create(
+                user_type="admin",
+                user_id="admin",
+                action=f"Added student: {self.usn}"
+            )
 
     def __str__(self):
         return f"{self.name} ({self.usn})"

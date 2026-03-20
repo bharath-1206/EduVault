@@ -196,7 +196,7 @@ cloudinary.config(
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Session timeout (10 minutes)
-SESSION_COOKIE_AGE = 30   # 600 seconds = 10 minutes
+SESSION_COOKIE_AGE = 300   # 600 seconds = 10 minutes
 
 # Expire session if browser closes
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
