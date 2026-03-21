@@ -113,142 +113,136 @@ python manage.py runserver
 
 Create a superuser:
 
-```bash
+
 python manage.py createsuperuser
 
 Access the Django admin panel:
 
 http://127.0.0.1:8000/admin/
 👑 Admin Capabilities
+```
+# 🎓 EduVault Admin Panel
 
 The admin panel provides full control over the system:
 
-🧑‍🎓 Student Management
+---
 
-Add new students manually
+## 🧑‍🎓 Student Management
 
-Automatically detects:
+- Add new students manually  
+- Automatically detects:
+  - Scheme from USN  
+  - Branch from USN  
+- View and manage all registered students  
 
-Scheme from USN
+---
 
-Branch from USN
+## 👨‍🏫 Staff Management
 
-View and manage all registered students
+- Add new staff members  
+- Assign:
+  - Staff ID  
+  - Password  
+  - Branch  
 
-👨‍🏫 Staff Management
+- Enable / Disable staff access:
+  - ✅ Active → can login  
+  - ❌ Inactive → login blocked  
 
-Add new staff members
+---
 
-Assign:
+## 📚 Materials Management
 
-Staff ID
+- View all uploaded materials  
+- Organized by:
+  - Subject  
+  - Branch  
 
-Password
+- Delete inappropriate or outdated materials  
 
-Branch
+---
 
-Enable / Disable staff access:
+## 📊 Activity Logs (Audit System)
 
-✅ Active → can login
+- View all system activities in one place  
 
-❌ Inactive → login blocked
+### Tracks:
+- 📁 Material uploads  
+- ❌ Material deletions  
+- 👨‍🎓 Student registrations  
 
-📚 Materials Management
+### Displays:
+- User type (admin / staff)  
+- User ID  
+- Action performed  
+- Timestamp  
 
-View all uploaded materials
+---
 
-Organized by:
+## 🔒 Log Security
 
-Subject
+- Logs are **read-only**  
+- Cannot be edited or deleted manually  
+- Only accessible through the admin panel  
 
-Branch
+---
 
-Delete inappropriate or outdated materials
+## 🔍 Admin Features
 
-📊 Activity Logs (Audit System)
+- Search logs by user or action  
 
-View all system activities in one place
+### Filter logs by:
+- User type  
+- Date/time  
 
-Tracks:
+- Sorted by latest activity  
 
-📁 Material uploads
+---
 
-❌ Material deletions
+## 📂 Project Structure
+- EduVault/
+-
+- ├── accounts/ # Authentication & logging
+- ├── students/ # Student model & logic
+- ├── staff/ # Staff dashboard & upload system
+- ├── materials/ # Study materials
+- ├── academics/ # Scheme, semester, subjects
+- ├-── templates/ # HTML templates
+- ├── static/ # CSS, JS
+- └── manage.py
 
-👨‍🎓 Student registrations
+---
 
-Displays:
+## 🌐 Deployment
 
-User type (admin / staff)
+- Deployed on **Render**  
+- Uses **PostgreSQL** database  
+- Media storage via **Cloudinary**  
+- Static files served using **WhiteNoise**  
 
-User ID
+---
 
-Action performed
+## 🔥 Future Enhancements
 
-Timestamp
+- 🔍 Search materials  
+- 👁️ PDF preview inside dashboard  
+- 📊 Download analytics  
+- 🔐 Password hashing for staff  
+- 📱 Mobile responsive UI improvements  
+- 📅 Advanced log filtering  
 
-🔒 Log Security
+---
 
-Logs are read-only
+## 👨‍💻 Author
 
-Cannot be edited or deleted manually
+**Mohan Gowda B L**
 
-Only accessible through the admin panel
+---
 
-🔍 Admin Features
-
-Search logs by user or action
-
-Filter logs by:
-
-User type
-
-Date/time
-
-Sorted by latest activity
-
-📂 Project Structure
-EduVault/
-│
-├── accounts/      # Authentication & logging
-├── students/      # Student model & logic
-├── staff/         # Staff dashboard & upload system
-├── materials/     # Study materials
-├── academics/     # Scheme, semester, subjects
-├── templates/     # HTML templates
-├── static/        # CSS, JS
-│
-└── manage.py
-🌐 Deployment
-
-EduVault is deployed on Render.
-
-Uses PostgreSQL database
-
-Cloudinary for media storage
-
-Static files served via WhiteNoise
-
-🔥 Future Enhancements
-
-🔍 Search materials
-
-👁️ PDF preview inside dashboard
-
-📊 Download analytics
-
-🔐 Password hashing for staff
-
-📱 Mobile responsive UI improvements
-
-📅 Advanced log filtering
-
-👨‍💻 Author
-
-Mohan Gowda B L
-
-📜 License
+## 📜 License
 
 This project is for educational use.
+
+---
 
 ⭐ If you like this project, consider giving it a star!
