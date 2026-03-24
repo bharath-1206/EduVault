@@ -6,7 +6,7 @@ from .models import Staff
 from materials.models import Material
 from academics.models import Scheme, Semester, Subject
 from accounts.models import ActivityLog
-
+from django.db.models import Q
 import cloudinary.uploader
 
 
@@ -32,7 +32,10 @@ def staff_login(request):
     semesters = Semester.objects.all()
     schemes = Scheme.objects.all()
 
-    materials = Material.objects.filter(subject__branch=staff.branch)
+    if staff.role_type == "cycle":
+        materials = Material.objects.filter(cycle=staff.cycle)
+    else:
+        materials = Material.objects.filter(branch=staff.branch)
 
     return render(
         request,
@@ -87,11 +90,18 @@ def upload_material(request):
             messages.error(request, "File size must be less than 20MB.")
             return redirect("/staff/")
 
-        Material.objects.create(
+        material = Material.objects.create(
             title=title,
             subject_id=subject_id,
             file=file
         )
+
+        if staff.role_type == "cycle":
+            material.cycle = staff.cycle
+        else:
+            material.branch = staff.branch
+
+        material.save()
         ActivityLog.objects.create(
             user_type="staff",
             user_id=staff.staff_id,
@@ -104,18 +114,43 @@ def upload_material(request):
 # -----------------------------------
 # GET SUBJECTS (AJAX)
 # -----------------------------------
+
+
 def get_subjects(request):
 
     scheme_id = request.GET.get("scheme")
+    staff_id = request.session.get("staff_id")
 
-    subjects = Subject.objects.filter(scheme_id=scheme_id)
+    if not staff_id:
+        return JsonResponse([], safe=False)
+
+    staff = Staff.objects.get(staff_id=staff_id)
+
+    # -----------------------------------
+    # FILTER SUBJECTS BASED ON ROLE
+    # -----------------------------------
+
+    if staff.role_type == "cycle":
+        # Only sem 1 & 2 subjects
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            semester__number__in=[1, 2]
+        )
+
+    else:
+        # Only branch subjects (sem 3+)
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            branch=staff.branch,
+            semester__number__gte=3
+        )
 
     data = []
 
     for subject in subjects:
         data.append({
             "id": subject.id,
-            "name": subject.name
+            "name": f"{subject.name} (Sem {subject.semester.number})"
         })
 
     return JsonResponse(data, safe=False)

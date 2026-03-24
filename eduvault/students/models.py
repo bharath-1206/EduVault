@@ -8,10 +8,11 @@ class Student(models.Model):
     name = models.CharField(max_length=100)
     usn = models.CharField(max_length=20, unique=True)
 
+    semester = models.IntegerField(default=1)  # ✅ NEW
+
     branche = models.ForeignKey(
         Branche,
         on_delete=models.CASCADE,
-        verbose_name="Branch",
         blank=True,
         null=True
     )
@@ -25,37 +26,25 @@ class Student(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # ✅ Check if new student
         is_new = self.pk is None
 
-        # 🔹 Detect scheme from USN
+        # Detect scheme
         try:
-            scheme_digits = self.usn[3:5]   # Example: "25"
-            scheme_year = int("20" + scheme_digits)  # 2025
+            scheme_digits = self.usn[3:5]
+            scheme_year = int("20" + scheme_digits)
+            self.scheme = Scheme.objects.get(year=scheme_year)
+        except:
+            pass
 
-            scheme_obj = Scheme.objects.get(year=scheme_year)
-            self.scheme = scheme_obj
-
-        except Scheme.DoesNotExist:
-            print(f"Scheme {scheme_year} not found in DB")
-        except Exception as e:
-            print("Scheme detection error:", e)
-
-        # 🔹 Detect branch from USN
+        # Detect branch
         try:
-            branch_code = self.usn[5:7]   # Example: "IC"
-            branch_obj = Branche.objects.get(code=branch_code)
-            self.branche = branch_obj
+            branch_code = self.usn[5:7]
+            self.branche = Branche.objects.get(code=branch_code)
+        except:
+            pass
 
-        except Branche.DoesNotExist:
-            print(f"Branch {branch_code} not found in DB")
-        except Exception as e:
-            print("Branch detection error:", e)
-
-        # ✅ Save student
         super().save(*args, **kwargs)
 
-        # ✅ Log only when new student is added
         if is_new:
             ActivityLog.objects.create(
                 user_type="admin",

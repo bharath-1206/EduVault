@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'academics',
 
     'eduvault.apps.EduvaultConfig',  # for admin auto creation
+    'rest_framework',
 ]
 
 # --------------------------------------------------

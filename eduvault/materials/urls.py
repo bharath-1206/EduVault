@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import semester_subjects, subject_materials
-
+from materials.views import get_materials
 urlpatterns = [
 
     path(
@@ -14,5 +14,5 @@ urlpatterns = [
         subject_materials,
         name="subject_materials"
     ),
-
+    path('api/materials/', get_materials),
 ]
