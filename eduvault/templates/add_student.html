@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="/staff/hod/students/" class="btn btn-secondary d-inline-block">
+        ← Back
+    </a>
+</div>
+<div class="col-md-6 mx-auto p-4">
+
+<h3>Add Student</h3>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Name</label>
+<input type="text" name="name" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label>USN</label>
+<input type="text" name="usn" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label>Section</label>
+<select name="section" class="form-control" required>
+
+<option value="">Select Section</option>
+
+{% for section in sections %}
+
+<option value="{{ section.id }}">
+{{ section }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+
+<button class="btn btn-success">
+Add Student
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

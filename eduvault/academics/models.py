@@ -34,8 +34,25 @@ class Subject(models.Model):
         branch_code = self.branch.code if self.branch else "N/A"
         semester_number = self.semester.number if self.semester else "?"
 
-        return f"{self.name} (Sem {semester_number} - {branch_code})"
+        return f"{self.name} (Sem {self.semester.number} - {self.branch.code} - {self.scheme.year})"
 # Create your models here.
 from django.db import models
 
+class Section(models.Model):
 
+    name = models.CharField(max_length=10)  # A, B, C
+
+    branch = models.ForeignKey(
+        "Branche",
+        on_delete=models.CASCADE
+    )
+
+    scheme = models.ForeignKey(
+        "Scheme",
+        on_delete=models.CASCADE,
+        null=True,  # ✅ ADD THIS
+        blank=True  # ✅ ADD THIS
+    )
+
+    def __str__(self):
+        return f"{self.branch.code} - {self.name} ({self.scheme.year})"

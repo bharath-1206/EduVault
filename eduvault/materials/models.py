@@ -9,7 +9,10 @@ class Material(models.Model):
         ("P", "P Cycle"),
         ("C", "C Cycle"),
     ]
-
+    section = models.ForeignKey(
+        "academics.Section",
+        on_delete=models.CASCADE
+    )
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
 
@@ -23,10 +26,3 @@ class Material(models.Model):
     def __str__(self):
         return self.title
 
-class CycleAssignment(models.Model):
-    branch = models.ForeignKey("academics.Branche", on_delete=models.CASCADE)
-    scheme = models.ForeignKey("academics.Scheme", on_delete=models.CASCADE)  # ✅ NEW
-    cycle = models.CharField(max_length=1, choices=[("P", "P"), ("C", "C")])
-
-    def __str__(self):
-        return f"{self.branch.name} ({self.scheme.year}) → {self.cycle}"

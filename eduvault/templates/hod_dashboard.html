@@ -1,0 +1,230 @@
+{% extends "hod_base.html" %}
+
+{% block hod_content %}
+
+<h3>HOD Dashboard - {{ staff.branch }}</h3>
+
+<hr>
+
+<!-- 🔥 MESSAGES -->
+
+{% if messages %}
+{% for message in messages %} <div class="alert alert-{{ message.tags }}">
+{{ message }} </div>
+{% endfor %}
+{% endif %}
+
+<!-- ===================== -->
+
+<!-- ✅ BULK UPLOAD -->
+
+<!-- ===================== -->
+
+<h4>Upload Students (CSV)</h4>
+
+<div class="card p-4 mb-4">
+
+<form method="POST" action="{% url 'upload_students_csv' %}" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Upload CSV File</label>
+<input type="file" name="file" class="form-control" required>
+</div>
+
+<button class="btn btn-primary">Upload Students</button>
+
+</form>
+
+<small class="text-muted">
+Format: name,usn,section
+</small>
+
+</div>
+
+<!-- ===================== -->
+
+<!-- ✅ ADD SECTION -->
+
+<!-- ===================== -->
+
+<h4>Add Section</h4>
+
+<div class="card p-4 mb-4">
+
+<form method="POST" action="{% url 'add_section' %}">
+{% csrf_token %}
+
+<input type="text" name="name" class="form-control mb-2" placeholder="Section Name" required>
+
+<select name="scheme" class="form-control mb-2" required>
+<option value="">Select Scheme</option>
+{% for scheme in schemes %}
+<option value="{{ scheme.id }}">{{ scheme.year }}</option>
+{% endfor %}
+</select>
+
+<button class="btn btn-success">Add Section</button>
+
+</form>
+
+</div>
+
+<!-- ===================== -->
+
+<!-- ✅ ADD SUBJECT -->
+
+<!-- ===================== -->
+
+<h4>Add Subject</h4>
+
+<div class="card p-4 mb-4">
+
+<form method="POST" action="{% url 'add_subject' %}">
+{% csrf_token %}
+
+<input type="text" name="name" class="form-control mb-2" placeholder="Subject Name" required>
+
+<select name="semester" class="form-control mb-2" required>
+{% for sem in semesters %}
+<option value="{{ sem.id }}">{{ sem.number }}</option>
+{% endfor %}
+</select>
+
+<select name="scheme" class="form-control mb-2" required>
+{% for scheme in schemes %}
+<option value="{{ scheme.id }}">{{ scheme.year }}</option>
+{% endfor %}
+</select>
+
+<button class="btn btn-success">Add Subject</button>
+
+</form>
+
+</div>
+
+<!-- ===================== -->
+
+<!-- 🔥 UPLOAD MATERIAL -->
+
+<!-- ===================== -->
+
+<h4>Upload Material</h4>
+
+<div class="card p-4 mb-4">
+
+<form method="POST" action="{% url 'upload_material' %}" enctype="multipart/form-data">
+{% csrf_token %}
+
+<select name="scheme" id="scheme" class="form-control mb-2" required>
+<option value="">Select Scheme</option>
+{% for scheme in schemes %}
+<option value="{{ scheme.id }}">{{ scheme.year }}</option>
+{% endfor %}
+</select>
+
+<select name="subject" id="subject" class="form-control mb-2" required>
+<option value="">Select Subject</option>
+</select>
+
+<select name="section" id="section" class="form-control mb-2" required>
+<option value="">Select Section</option>
+</select>
+
+<input type="text" name="title" placeholder="Material Title" class="form-control mb-2" required>
+
+<input type="file" name="file" class="form-control mb-2" required>
+
+<button class="btn btn-success">Upload Material</button>
+
+</form>
+
+</div>
+
+<!-- ===================== -->
+
+<!-- ✅ MATERIAL LIST -->
+
+<!-- ===================== -->
+
+<h4>Materials</h4>
+
+<div class="row">
+
+{% for material in materials %}
+
+<div class="col-md-3 mb-3">
+<div class="card p-3 text-center">
+
+<h6>{{ material.title }}</h6>
+
+<p class="text-muted">
+{{ material.subject.name }} <br>
+<small>{{ material.section }}</small>
+</p>
+
+<a href="{{ material.file.url }}" target="_blank"
+class="btn btn-primary btn-sm">
+View </a>
+
+<a href="{% url 'delete_material' material.id %}"
+class="btn btn-danger btn-sm mt-2">
+Delete </a>
+
+</div>
+</div>
+
+{% empty %}
+
+<p>No materials uploaded</p>
+{% endfor %}
+
+</div>
+
+<!-- ===================== -->
+
+<!-- 🔥 JS FIXED -->
+
+<!-- ===================== -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const scheme = document.getElementById("scheme");
+
+    if(!scheme) return;
+
+    scheme.addEventListener("change", function(){
+
+        const schemeId = this.value;
+
+        let subjectSelect = document.getElementById("subject");
+        let sectionSelect = document.getElementById("section");
+
+        subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+        sectionSelect.innerHTML = '<option value="">Select Section</option>';
+
+        if(!schemeId) return;
+
+        fetch(`/staff/get-subjects/?scheme=${schemeId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(s => {
+                subjectSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        });
+
+        fetch(`/staff/get-sections/?scheme=${schemeId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(sec => {
+                sectionSelect.innerHTML += `<option value="${sec.id}">${sec.name}</option>`;
+            });
+        });
+
+    });
+
+});
+</script>
+
+{% endblock %}

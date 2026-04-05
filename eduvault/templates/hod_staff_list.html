@@ -1,0 +1,40 @@
+{% extends "hod_base.html" %}
+
+{% block hod_content %}
+
+<h3>Staff List</h3>
+
+<table class="table">
+
+<tr>
+<th>Name</th>
+<th>Staff ID</th>
+<th>Role</th>
+<th>Actions</th>
+</tr>
+
+{% for s in staff_list %}
+
+<tr>
+<td>{{ s.name }}</td>
+<td>{{ s.staff_id }}</td>
+<td>{{ s.role_type }}</td>
+
+<td>
+<a href="/staff/hod/edit-staff/{{ s.id }}/" class="btn btn-warning btn-sm">
+Edit
+</a>
+
+<a href="/staff/hod/delete-staff/{{ s.id }}/"
+class="btn btn-danger btn-sm">
+Delete </a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

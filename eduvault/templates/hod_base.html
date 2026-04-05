@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex">
+
+<div style="width:220px; background:#f1f1f1; padding:15px; min-height:100vh;">
+
+<h5>HOD Panel</h5>
+<hr>
+
+<a href="/staff/hod/">Dashboard</a><br> <a href="/staff/hod/students/">Students</a><br> <a href="/staff/hod/add-staff/">Add Staff</a><br> <a href="/staff/hod/staff/">Manage Staff</a>
+
+</div>
+
+<div style="flex:1; padding:20px;">
+{% block hod_content %}{% endblock %}
+</div>
+
+</div>
+
+{% endblock %}

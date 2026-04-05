@@ -6,6 +6,7 @@ class Staff(models.Model):
     ROLE_CHOICES = [
         ("cycle", "Cycle Staff"),
         ("branch", "Branch Staff"),
+        ("hod", "HOD"),
     ]
 
     CYCLE_CHOICES = [
@@ -39,3 +40,16 @@ class Staff(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+
+        if self.role_type == "hod":
+            existing_hod = Staff.objects.filter(
+                role_type="hod",
+                branch=self.branch
+            ).exclude(pk=self.pk)
+
+            if existing_hod.exists():
+                raise ValueError("HOD already exists for this branch.")
+
+        super().save(*args, **kwargs)

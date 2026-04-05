@@ -23,6 +23,12 @@ class Student(models.Model):
         blank=True,
         null=True
     )
+    section = models.ForeignKey(
+        "academics.Section",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     def save(self, *args, **kwargs):
 

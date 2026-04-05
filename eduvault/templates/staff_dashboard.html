@@ -6,9 +6,16 @@
 
 <h3>Welcome {{ staff.name }}</h3>
 
+<!-- ✅ FIXED ROLE DISPLAY -->
+{% if staff.role_type == "cycle" %}
+<p class="text-muted">
+Role: Cycle Staff
+</p>
+{% else %}
 <p class="text-muted">
 Branch: {{ staff.branch }}
 </p>
+{% endif %}
 
 <hr>
 
@@ -24,7 +31,7 @@ Branch: {{ staff.branch }}
 
 <label>Scheme</label>
 
-<select id="scheme" class="form-control">
+<select name="scheme" id="scheme" class="form-control" required>
 
 <option value="">Select Scheme</option>
 
@@ -41,9 +48,28 @@ Branch: {{ staff.branch }}
 
 <label>Subject</label>
 
-<select name="subject" id="subject" class="form-control">
+<select name="subject" id="subject" class="form-control" required>
 
-<option>Select Subject</option>
+<option value="">Select Subject</option>
+
+</select>
+
+</div>
+
+
+<div class="mb-3">
+
+<label>Section</label>
+
+<select name="section" class="form-control" required>
+
+<option value="">Select Section</option>
+
+{% for section in sections %}
+<option value="{{ section.id }}">
+{{ section }}
+</option>
+{% endfor %}
 
 </select>
 
@@ -92,7 +118,8 @@ Upload Material
 <h6>{{ material.title }}</h6>
 
 <p class="text-muted">
-{{ material.subject.name }}
+{{ material.subject.name }} <br>
+<small>{{ material.section }}</small>
 </p>
 
 <a href="{{ material.file.url }}"
@@ -131,21 +158,39 @@ document.getElementById("scheme").addEventListener("change", function(){
 
 const schemeId = this.value;
 
+let subjectSelect = document.getElementById("subject");
+let sectionSelect = document.querySelector("select[name='section']");
+
+// RESET
+subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+sectionSelect.innerHTML = '<option value="">Select Section</option>';
+
+if(!schemeId) return;
+
+// -------------------
+// LOAD SUBJECTS
+// -------------------
 fetch(`/staff/get-subjects/?scheme=${schemeId}`)
-
 .then(response => response.json())
-
 .then(data => {
 
-let subjectSelect = document.getElementById("subject");
-
-subjectSelect.innerHTML = "";
-
 data.forEach(subject => {
-
 subjectSelect.innerHTML +=
 `<option value="${subject.id}">${subject.name}</option>`;
+});
 
+});
+
+// -------------------
+// LOAD SECTIONS 🔥
+// -------------------
+fetch(`/staff/get-sections/?scheme=${schemeId}`)
+.then(response => response.json())
+.then(data => {
+
+data.forEach(section => {
+sectionSelect.innerHTML +=
+`<option value="${section.id}">${section.name}</option>`;
 });
 
 });
@@ -155,6 +200,8 @@ subjectSelect.innerHTML +=
 </script>
 
 {% endblock %}
+
+
 {% block scripts %}
 <script>
     let timeout;
@@ -164,7 +211,7 @@ subjectSelect.innerHTML +=
         timeout = setTimeout(() => {
             alert("Session expired. Logging out...");
             window.location.href = "/logout/";
-        }, 120000); // 30000=30 sec
+        }, 120000);
     }
 
     document.onload = resetTimer;
