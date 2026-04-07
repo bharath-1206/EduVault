@@ -190,10 +190,19 @@ def get_subjects(request):
     if staff.role_type == "cycle":
         subjects = Subject.objects.filter(scheme_id=scheme_id)
     else:
-        subjects = Subject.objects.filter(scheme_id=scheme_id, branch=staff.branch)
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            branch=staff.branch
+        )
 
     return JsonResponse(
-        [{"id": s.id, "name": s.name} for s in subjects],
+        [
+            {
+                "id": s.id,
+                "name": str(s)   # 🔥 FIX APPLIED
+            }
+            for s in subjects
+        ],
         safe=False
     )
 
