@@ -43,7 +43,7 @@
 <tr>
 <td>{{ student.name }}</td>
 <td>{{ student.usn }}</td>
-<td>{{ student.section }}</td>
+<td>{{ student.branche.code }} - {{ student.section.name }} ({{ student.scheme.year }})</td>
 
 <td>
 <a href="/staff/hod/edit-student/{{ student.id }}/"

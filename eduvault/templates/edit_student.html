@@ -32,6 +32,18 @@
 {% endfor %}
 
 </select>
+    <label>
+<input type="checkbox" name="is_diploma"
+{% if student.is_diploma %}checked{% endif %}>
+ Diploma Student
+</label>
+    <div class="mb-3">
+<label>Scheme (for Year-back)</label>
+<input type="number" name="scheme_year" class="form-control"
+placeholder="Leave empty for auto"
+value="{{ student.scheme.year }}">
+</div>
+
 </div>
 
 <button class="btn btn-success">

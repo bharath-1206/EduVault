@@ -244,10 +244,13 @@ def add_student(request):
             return redirect("/staff/hod/students/")
 
         # ✅ Safe insert
+        is_diploma = request.POST.get("is_diploma") == "on"
+
         Student.objects.create(
             name=request.POST.get("name"),
             usn=usn,
-            section_id=section_id
+            section_id=section_id,
+            is_diploma=is_diploma
         )
 
         return redirect("/staff/hod/students/")
@@ -277,9 +280,25 @@ def edit_student(request, student_id):
             messages.error(request, "Invalid section")
             return redirect("/staff/hod/students/")
 
+        # ✅ Update basic fields
         student.name = request.POST.get("name")
-        student.usn = request.POST.get("usn")
+        student.usn = request.POST.get("usn").strip().upper()
         student.section_id = section_id
+
+        # ✅ Handle diploma checkbox
+        student.is_diploma = request.POST.get("is_diploma") == "on"
+
+        # ✅ Handle manual scheme (year-back support)
+        scheme_year = request.POST.get("scheme_year")
+
+        if scheme_year:
+            scheme_obj = Scheme.objects.filter(year=int(scheme_year)).first()
+            if scheme_obj:
+                student.scheme = scheme_obj
+        else:
+            # 🔥 Important: clear scheme so save() recalculates
+            student.scheme = None
+
         student.save()
 
         return redirect("/staff/hod/students/")
@@ -310,6 +329,11 @@ def delete_student(request, student_id):
 # -----------------------------------
 # CSV UPLOAD (FIXED)
 # -----------------------------------
+from io import TextIOWrapper
+import csv
+from django.shortcuts import redirect
+from django.contrib import messages
+
 def upload_students_csv(request):
 
     staff = get_staff(request)
@@ -333,15 +357,20 @@ def upload_students_csv(request):
 
             for row in reader:
                 try:
-                    name = row.get("name")
-                    usn = row.get("usn")
+                    # ✅ Clean input
+                    name = row.get("name", "").strip()
+                    usn = row.get("usn", "").strip().upper()
                     section_name = row.get("section", "").strip()
+                    is_diploma = row.get("is_diploma", "").strip().lower() == "yes"
+                    scheme_year = row.get("scheme_year", "").strip()  # 🔥 NEW
 
-                    if not all([name, usn, section_name]):
-                        print("❌ Missing data in row:", row)
+                    # ✅ Validate
+                    if not name or not usn or not section_name:
+                        print("❌ Missing data:", row)
                         skipped_count += 1
                         continue
 
+                    # ✅ Get section
                     section = Section.objects.filter(
                         name=section_name,
                         branch=staff.branch
@@ -352,20 +381,31 @@ def upload_students_csv(request):
                         skipped_count += 1
                         continue
 
-                    student, created = Student.objects.get_or_create(
-                        usn=usn,
-                        defaults={
-                            "name": name,
-                            "section": section
-                        }
-                    )
-
-                    if created:
-                        created_count += 1
-                        print("✅ Created:", usn)
-                    else:
+                    # ✅ Skip duplicates
+                    if Student.objects.filter(usn=usn).exists():
                         skipped_count += 1
                         print("⚠️ Duplicate skipped:", usn)
+                        continue
+
+                    # ✅ Create student
+                    student = Student(
+                        name=name,
+                        usn=usn,
+                        section=section,
+                        is_diploma=is_diploma
+                    )
+
+                    # 🔥 Year-back handling (manual scheme override)
+                    if scheme_year:
+                        scheme_obj = Scheme.objects.filter(year=int(scheme_year)).first()
+                        if scheme_obj:
+                            student.scheme = scheme_obj
+
+                    # ✅ Save (will auto-apply logic if scheme not set)
+                    student.save()
+
+                    created_count += 1
+                    print("✅ Created:", usn)
 
                 except Exception as e:
                     print("❌ Row error:", row, e)

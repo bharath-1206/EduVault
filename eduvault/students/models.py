@@ -4,7 +4,7 @@ from accounts.models import ActivityLog
 
 
 class Student(models.Model):
-
+    is_diploma = models.BooleanField(default=False)
     name = models.CharField(max_length=100)
     usn = models.CharField(max_length=20, unique=True)
 
@@ -23,6 +23,7 @@ class Student(models.Model):
         blank=True,
         null=True
     )
+
     section = models.ForeignKey(
         "academics.Section",
         on_delete=models.SET_NULL,
@@ -34,20 +35,45 @@ class Student(models.Model):
 
         is_new = self.pk is None
 
-        # Detect scheme
+        # =========================
+        # DETECT SCHEME (FINAL)
+        # =========================
         try:
-            scheme_digits = self.usn[3:5]
-            scheme_year = int("20" + scheme_digits)
-            self.scheme = Scheme.objects.get(year=scheme_year)
-        except:
-            pass
+            # 🔥 DO NOT override if already set (important for year-back)
+            if not self.scheme:
 
-        # Detect branch
+                scheme_digits = self.usn[3:5]
+                scheme_year = int("20" + scheme_digits)
+
+                # ✅ Diploma → previous year
+                if self.is_diploma:
+                    scheme_year = scheme_year - 1
+
+                scheme_obj = Scheme.objects.filter(year=scheme_year).first()
+
+                if scheme_obj:
+                    self.scheme = scheme_obj
+                else:
+                    print(f"⚠️ Scheme {scheme_year} not found for USN {self.usn}")
+
+        except Exception as e:
+            print(f"❌ Scheme error for {self.usn}: {e}")
+
+        # =========================
+        # DETECT BRANCH
+        # =========================
         try:
             branch_code = self.usn[5:7]
-            self.branche = Branche.objects.get(code=branch_code)
-        except:
-            pass
+
+            branch_obj = Branche.objects.filter(code=branch_code).first()
+
+            if branch_obj:
+                self.branche = branch_obj
+            else:
+                print(f"⚠️ Branch {branch_code} not found for USN {self.usn}")
+
+        except Exception as e:
+            print(f"❌ Branch detection error for {self.usn}: {e}")
 
         super().save(*args, **kwargs)
 
