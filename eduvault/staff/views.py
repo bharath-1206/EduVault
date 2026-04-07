@@ -127,8 +127,24 @@ def upload_material(request):
             messages.error(request, "All fields required")
         else:
             try:
-                subject = Subject.objects.get(id=subject_id, branch=staff.branch)
-                section = Section.objects.get(id=section_id, branch=staff.branch)
+                subject = Subject.objects.get(id=subject_id)
+
+                # 🔥 Branch restriction ONLY for non-cycle
+                if staff.role_type != "cycle":
+                    if subject.branch != staff.branch:
+                        raise Exception("Invalid subject for your branch")
+
+                # 🔥 Cycle staff → only Sem 1 & 2
+                if staff.role_type == "cycle":
+                    if subject.semester.number not in [1, 2]:
+                        messages.error(request, "Cycle staff can upload only for Sem 1 & 2")
+                        return redirect("/staff/dashboard/")
+
+                # 🔥 Section restriction
+                if staff.role_type == "cycle":
+                    section = Section.objects.get(id=section_id)
+                else:
+                    section = Section.objects.get(id=section_id, branch=staff.branch)
 
                 Material.objects.create(
                     title=title,
@@ -188,7 +204,10 @@ def get_subjects(request):
     scheme_id = request.GET.get("scheme")
 
     if staff.role_type == "cycle":
-        subjects = Subject.objects.filter(scheme_id=scheme_id)
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            semester__number__in=[1, 2]   # 🔥 restriction
+        )
     else:
         subjects = Subject.objects.filter(
             scheme_id=scheme_id,
@@ -199,7 +218,7 @@ def get_subjects(request):
         [
             {
                 "id": s.id,
-                "name": str(s)   # 🔥 FIX APPLIED
+                "name": str(s)
             }
             for s in subjects
         ],
@@ -505,6 +524,11 @@ def add_staff(request):
             messages.error(request, "All fields required")
             return redirect("/staff/hod/add-staff/")
 
+        # 🔥 HOD cannot create cycle staff
+        if role_type == "cycle":
+            messages.error(request, "HOD cannot create cycle staff")
+            return redirect("/staff/hod/add-staff/")
+
         if Staff.objects.filter(staff_id=staff_id).exists():
             messages.error(request, "Staff ID already exists")
             return redirect("/staff/hod/add-staff/")
@@ -514,7 +538,7 @@ def add_staff(request):
             staff_id=staff_id,
             password=password,
             role_type=role_type,
-            branch=staff.branch
+            branch=staff.branch  # only branch staff
         )
 
         messages.success(request, "Staff created successfully")

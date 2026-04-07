@@ -17,20 +17,7 @@
 <input type="password" name="password" class="form-control">
 </div>
 
-<div class="mb-3">
-<label>Role</label>
-<select name="role_type" class="form-control">
 
-<option value="branch" {% if staff.role_type == "branch" %}selected{% endif %}>
-Branch Staff
-</option>
-
-<option value="cycle" {% if staff.role_type == "cycle" %}selected{% endif %}>
-Cycle Staff
-</option>
-
-</select>
-</div>
 
 <button class="btn btn-success">
 Update
