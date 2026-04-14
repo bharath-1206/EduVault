@@ -53,6 +53,7 @@ def staff_login(request):
 
 
 # 🔥 FIXED DASHBOARD
+# 🔥 FIXED DASHBOARD
 def staff_dashboard(request):
 
     staff = get_staff(request)
@@ -72,7 +73,8 @@ def staff_dashboard(request):
         sections = Section.objects.all()
     else:
         materials = Material.objects.filter(
-            section__branch=staff.branch
+            section__branch=staff.branch,
+            subject__semester__number__gt=2   # 🔥 FIX ADDED
         )
         sections = Section.objects.filter(branch=staff.branch)
 
@@ -82,7 +84,6 @@ def staff_dashboard(request):
         "materials": materials,
         "sections": sections
     })
-
 
 def hod_dashboard(request):
 
@@ -99,6 +100,7 @@ def hod_dashboard(request):
 
 
 # 🔥 NEW MATERIAL PAGE
+# 🔥 NEW MATERIAL PAGE
 def view_materials(request):
 
     staff = get_staff(request)
@@ -111,15 +113,14 @@ def view_materials(request):
         )
     else:
         materials = Material.objects.filter(
-            section__branch=staff.branch
+            section__branch=staff.branch,
+            subject__semester__number__gt=2   # 🔥 FIX ADDED
         )
 
     return render(request, "view_materials.html", {
         "materials": materials,
         "staff": staff
     })
-
-
 # ---------------- (REST SAME AS YOUR CODE) ----------------
 
 # -----------------------------------
@@ -159,6 +160,9 @@ def hod_students(request):
 # -----------------------------------
 # MATERIAL UPLOAD
 # -----------------------------------
+# -----------------------------------
+# MATERIAL UPLOAD
+# -----------------------------------
 def upload_material(request):
 
     staff = get_staff(request)
@@ -182,6 +186,10 @@ def upload_material(request):
                 if staff.role_type != "cycle":
                     if subject.branch != staff.branch:
                         raise Exception("Invalid subject for your branch")
+
+                    # 🔥 NEW FIX → block cycle uploads by branch staff
+                    if subject.semester.number <= 2:
+                        raise Exception("Branch staff cannot upload cycle materials")
 
                 # 🔥 Cycle staff → only Sem 1 & 2
                 if staff.role_type == "cycle":
@@ -216,8 +224,6 @@ def upload_material(request):
         return redirect("/staff/hod/" if staff.role_type == "hod" else "/staff/dashboard/")
 
     return redirect("/")
-
-
 # -----------------------------------
 # DELETE MATERIAL
 # -----------------------------------
