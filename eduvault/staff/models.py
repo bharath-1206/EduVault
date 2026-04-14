@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class Staff(models.Model):
@@ -16,19 +17,12 @@ class Staff(models.Model):
 
     name = models.CharField(max_length=100)
     staff_id = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=255)
 
     role_type = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
-    # ✅ For cycle staff
-    cycle = models.CharField(
-        max_length=1,
-        choices=CYCLE_CHOICES,
-        blank=True,
-        null=True
-    )
+    cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES, blank=True, null=True)
 
-    # ✅ For branch staff
     branch = models.ForeignKey(
         "academics.Branche",
         on_delete=models.CASCADE,
@@ -41,7 +35,15 @@ class Staff(models.Model):
     def __str__(self):
         return self.name
 
+    # ✅ PASSWORD CHECK METHOD (NEW)
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+
     def save(self, *args, **kwargs):
+
+        # 🔐 HASH ONLY IF NOT HASHED
+        if not self.password.startswith("pbkdf2_"):
+            self.password = make_password(self.password)
 
         if self.role_type == "hod":
             existing_hod = Staff.objects.filter(

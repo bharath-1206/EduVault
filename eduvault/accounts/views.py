@@ -4,11 +4,18 @@ from students.models import Student
 from staff.models import Staff
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from students.models import Student
+from staff.models import Staff
+
+
 def login_view(request):
 
-    # ✅ ALWAYS clear session when opening login page
+    # ✅ Clear session ONLY if already logged in (safer)
     if request.method == "GET":
-        request.session.flush()
+        if "staff_id" in request.session or "student_id" in request.session:
+            request.session.flush()
 
     if request.method == "POST":
 
@@ -21,8 +28,9 @@ def login_view(request):
 
         user_id = user_id.strip()
 
-        # Clear any previous session before login
-        request.session.flush()
+        # 🔥 Clear session ONLY once before login
+        if "staff_id" in request.session or "student_id" in request.session:
+            request.session.flush()
 
         # -------------------------------
         # STUDENT LOGIN (NO PASSWORD)
@@ -53,7 +61,7 @@ def login_view(request):
                 })
 
             # Step 2: Check password
-            if staff.password != password:
+            if not staff.check_password(password):
                 messages.error(request, "Invalid password")
                 return render(request, "login.html", {
                     "ask_password": True,
@@ -75,6 +83,12 @@ def login_view(request):
 
     return render(request, "login.html")
 
+
+def logout_user(request):
+
+    request.session.flush()
+
+    return redirect("/")
 
 def logout_user(request):
 
