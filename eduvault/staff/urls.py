@@ -58,4 +58,5 @@ urlpatterns = [
     path('hod/add-section/', views.add_section, name='add_section'),
     path('hod/add-subject/', views.add_subject, name='add_subject'),
     path('materials/', views.view_materials, name='view_materials'),
+    path('logout/', views.staff_logout, name='logout'),
 ]

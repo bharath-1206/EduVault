@@ -1,21 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from students.models import Student
-from staff.models import Staff
 
-
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.shortcuts import render, redirect
+
 from students.models import Student
 from staff.models import Staff
 
 
 def login_view(request):
 
-    # ✅ Clear session ONLY if already logged in (safer)
     if request.method == "GET":
-        if "staff_id" in request.session or "student_id" in request.session:
-            request.session.flush()
+        return render(request, "login.html")
 
     if request.method == "POST":
 
@@ -23,22 +18,17 @@ def login_view(request):
         password = request.POST.get("password")
 
         if not user_id:
-            messages.error(request, "Please enter USN or Staff ID")
+            messages.error(request, "Enter ID")
             return render(request, "login.html")
 
         user_id = user_id.strip()
 
-        # 🔥 Clear session ONLY once before login
-        if "staff_id" in request.session or "student_id" in request.session:
-            request.session.flush()
-
         # -------------------------------
-        # STUDENT LOGIN (NO PASSWORD)
+        # STEP 1 → CHECK STUDENT
         # -------------------------------
         student = Student.objects.filter(usn=user_id).first()
 
         if student:
-
             request.session["student_id"] = student.usn
 
             if student.scheme:
@@ -47,39 +37,42 @@ def login_view(request):
             return redirect("/student/")
 
         # -------------------------------
-        # STAFF LOGIN (PASSWORD REQUIRED)
+        # STEP 2 → CHECK STAFF
         # -------------------------------
         staff = Staff.objects.filter(staff_id=user_id).first()
 
         if staff:
 
-            # Step 1: Ask password
+            # STEP 2A → ask password
             if not password:
                 return render(request, "login.html", {
                     "ask_password": True,
                     "staff_id": user_id
                 })
 
-            # Step 2: Check password
-            if not staff.check_password(password):
+            # STEP 2B → authenticate via Django
+            user = authenticate(request, username=user_id, password=password)
+
+            if not user:
                 messages.error(request, "Invalid password")
                 return render(request, "login.html", {
                     "ask_password": True,
                     "staff_id": user_id
                 })
 
-            # Step 3: Check active
             if not staff.is_active:
-                messages.error(request, "Your account is inactive. Contact admin.")
+                messages.error(request, "Inactive account")
                 return render(request, "login.html")
 
-            request.session["staff_id"] = staff.staff_id
+            # ✅ LOGIN (Django session)
+            login(request, user)
+
             return redirect("/staff/")
 
         # -------------------------------
-        # Invalid Login
+        # INVALID
         # -------------------------------
-        messages.error(request, "Invalid USN or Staff ID")
+        messages.error(request, "Invalid ID")
 
     return render(request, "login.html")
 

@@ -26,9 +26,7 @@ body{
 
 <div class="card shadow login-card p-4">
 
-<h3 class="text-center">
-EduVault
-</h3>
+<h3 class="text-center">EduVault</h3>
 
 <h5 class="text-center text-muted">
 Rajarajeswari College of Engineering (An Autonomous Institution)
@@ -44,27 +42,51 @@ Rajarajeswari College of Engineering (An Autonomous Institution)
 {% endfor %}
 {% endif %}
 
-<form method="POST" action="/">
-
+<form method="POST" autocomplete="off">
 {% csrf_token %}
 
-<!-- ✅ USER ID FIELD -->
+<!-- 🔥 Autofill trap fields -->
+<input type="text" name="fake_user" style="display:none">
+<input type="password" name="fake_pass" style="display:none">
+
+{% if ask_password %}
+
+<!-- ✅ LOCKED STAFF ID -->
 <input type="text"
 name="usn"
 class="form-control mb-3"
-placeholder="Enter USN or Staff ID"
-autocomplete="username"
-value="{% if ask_password %}{{ staff_id }}{% endif %}"
-required>
+value="{{ staff_id }}"
+readonly
+autocomplete="off">
 
-<!-- ✅ PASSWORD FIELD (ONLY AFTER STEP 1) -->
-{% if ask_password %}
+<!-- 🔥 PASSWORD FIELD (NO NAME CHANGE) -->
 <input type="password"
 name="password"
 class="form-control mb-3"
 placeholder="Enter Password"
-autocomplete="new-password"
+autocomplete="off"
+autocorrect="off"
+autocapitalize="off"
+spellcheck="false"
+readonly
+onfocus="this.removeAttribute('readonly');"
 required>
+
+<!-- change ID option -->
+<div class="text-center mb-2">
+<a href="/">Change ID</a>
+</div>
+
+{% else %}
+
+<!-- STEP 1 -->
+<input type="text"
+name="usn"
+class="form-control mb-3"
+placeholder="Enter Staff ID"
+autocomplete="off"
+required>
+
 {% endif %}
 
 <button class="btn btn-primary w-100">
