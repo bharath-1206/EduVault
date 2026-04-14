@@ -11,11 +11,21 @@ from accounts.models import ActivityLog
 import cloudinary.uploader
 import csv
 from io import TextIOWrapper
+from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
+
+from .models import Staff
+from materials.models import Material
+from academics.models import Scheme, Semester, Subject, Section
+from students.models import Student
+from accounts.models import ActivityLog
+
+import cloudinary.uploader
+import csv
+from io import TextIOWrapper
 
 
-# -----------------------------------
-# HELPER (FIXED)
-# -----------------------------------
 def get_staff(request):
     staff_id = request.session.get("staff_id")
 
@@ -28,9 +38,6 @@ def get_staff(request):
         return None
 
 
-# -----------------------------------
-# LOGIN
-# -----------------------------------
 def staff_login(request):
     staff = get_staff(request)
 
@@ -45,9 +52,7 @@ def staff_login(request):
     return redirect("/staff/hod/" if staff.role_type == "hod" else "/staff/dashboard/")
 
 
-# -----------------------------------
-# STAFF DASHBOARD
-# -----------------------------------
+# 🔥 FIXED DASHBOARD
 def staff_dashboard(request):
 
     staff = get_staff(request)
@@ -59,11 +64,16 @@ def staff_dashboard(request):
 
     schemes = Scheme.objects.all()
 
+    # ✅ FIXED FILTERING
     if staff.role_type == "cycle":
-        materials = Material.objects.all()
+        materials = Material.objects.filter(
+            subject__semester__number__in=[1, 2]
+        )
         sections = Section.objects.all()
     else:
-        materials = Material.objects.filter(section__branch=staff.branch)
+        materials = Material.objects.filter(
+            section__branch=staff.branch
+        )
         sections = Section.objects.filter(branch=staff.branch)
 
     return render(request, "staff_dashboard.html", {
@@ -74,9 +84,6 @@ def staff_dashboard(request):
     })
 
 
-# -----------------------------------
-# HOD DASHBOARD
-# -----------------------------------
 def hod_dashboard(request):
 
     staff = get_staff(request)
@@ -89,6 +96,48 @@ def hod_dashboard(request):
         "semesters": Semester.objects.all(),
         "materials": Material.objects.filter(section__branch=staff.branch)
     })
+
+
+# 🔥 NEW MATERIAL PAGE
+def view_materials(request):
+
+    staff = get_staff(request)
+    if not staff:
+        return redirect("/")
+
+    if staff.role_type == "cycle":
+        materials = Material.objects.filter(
+            subject__semester__number__in=[1, 2]
+        )
+    else:
+        materials = Material.objects.filter(
+            section__branch=staff.branch
+        )
+
+    return render(request, "view_materials.html", {
+        "materials": materials,
+        "staff": staff
+    })
+
+
+# ---------------- (REST SAME AS YOUR CODE) ----------------
+
+# -----------------------------------
+# HELPER (FIXED)
+# -----------------------------------
+
+
+# -----------------------------------
+# LOGIN
+# -----------------------------------
+
+# -----------------------------------
+# STAFF DASHBOARD
+# -----------------------------------
+
+# -----------------------------------
+# HOD DASHBOARD
+# -----------------------------------
 
 
 # -----------------------------------
@@ -204,10 +253,7 @@ def get_subjects(request):
     scheme_id = request.GET.get("scheme")
 
     if staff.role_type == "cycle":
-        subjects = Subject.objects.filter(
-            scheme_id=scheme_id,
-            semester__number__in=[1, 2]   # 🔥 restriction
-        )
+        subjects = Subject.objects.filter(scheme_id=scheme_id)
     else:
         subjects = Subject.objects.filter(
             scheme_id=scheme_id,
@@ -218,7 +264,7 @@ def get_subjects(request):
         [
             {
                 "id": s.id,
-                "name": str(s)
+                "name": str(s)   # 🔥 FIX APPLIED
             }
             for s in subjects
         ],
@@ -565,7 +611,11 @@ def edit_staff(request, id):
 
     if request.method == "POST":
         target.name = request.POST.get("name")
-        target.password = request.POST.get("password")
+        new_password = request.POST.get("password")
+
+        if new_password:
+            target.password = new_password  # will auto-hash in model
+
         target.save()
 
         messages.success(request, "Staff updated successfully")
