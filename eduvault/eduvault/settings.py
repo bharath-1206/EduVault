@@ -43,7 +43,8 @@ INSTALLED_APPS = [
 
     'accounts',
     'students',
-    'staff',
+    'staff.apps.StaffConfig',
+
     'materials',
     'academics',
 

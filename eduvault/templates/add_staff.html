@@ -4,7 +4,7 @@
 
 <h3>Add Staff</h3>
 
-<form method="POST">
+<form method="POST" autocomplete="off">
 {% csrf_token %}
 
 <div class="mb-3">
@@ -14,12 +14,19 @@
 
 <div class="mb-3">
 <label>Staff ID</label>
-<input type="text" name="staff_id" class="form-control" required>
+<input type="text"
+name="staff_id"
+class="form-control mb-3"
+autocomplete="off"
+required>
 </div>
 
 <div class="mb-3">
 <label>Password</label>
-<input type="password" name="password" class="form-control" autocomplete="new-password" required>
+<input type="password"
+name="password"
+class="form-control mb-3"
+autocomplete="new-password">
 </div>
 
 
