@@ -149,39 +149,7 @@ Format: name,usn,section,is_diploma,scheme_year
 <a href="/staff/materials/" class="btn btn-primary mb-3">
     View All Materials
 </a>
-<h4>Materials</h4>
 
-<div class="row">
-
-{% for material in materials %}
-
-<div class="col-md-3 mb-3">
-<div class="card p-3 text-center">
-
-<h6>{{ material.title }}</h6>
-
-<p class="text-muted">
-{{ material.subject.name }} <br>
-<small>{{ material.section }}</small>
-</p>
-
-<a href="{{ material.file.url }}" target="_blank"
-class="btn btn-primary btn-sm">
-View </a>
-
-<a href="{% url 'delete_material' material.id %}"
-class="btn btn-danger btn-sm mt-2">
-Delete </a>
-
-</div>
-</div>
-
-{% empty %}
-
-<p>No materials uploaded</p>
-{% endfor %}
-
-</div>
 
 <!-- ===================== -->
 
