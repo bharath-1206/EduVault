@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
+{% load static  %}
 <html>
 
 <head>
-
+<link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpeg' %}">
 <title>EduVault Login</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +28,14 @@ body{
 
 <div class="card shadow login-card p-4">
 
-<h3 class="text-center">EduVault</h3>
+<div class="d-flex align-items-center justify-content-center mb-3">
+
+    <img src="{% static 'images/logo.jpeg' %}"
+         style="width:50px; height:auto; margin-right:10px;">
+
+    <h3 class="mb-0">EduVault</h3>
+
+</div>
 
 <h5 class="text-center text-muted">
 Rajarajeswari College of Engineering (An Autonomous Institution)
