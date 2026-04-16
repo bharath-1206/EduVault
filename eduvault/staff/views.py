@@ -211,7 +211,10 @@ def get_subjects(request):
 
     # 🔐 HOD → all subjects
     if staff.role_type == "hod":
-        subjects = Subject.objects.filter(scheme_id=scheme_id)
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            branch=staff.branch
+        )
 
     # 🔵 Cycle staff → ONLY sem 1 & 2
     elif staff.role_type == "cycle":
@@ -241,7 +244,10 @@ def get_sections(request):
     scheme_id = request.GET.get("scheme")
 
     if staff.role_type == "hod":
-        sections = Section.objects.filter(scheme_id=scheme_id)
+        sections = Section.objects.filter(
+            scheme_id=scheme_id,
+            branch=staff.branch
+        )
 
     elif staff.role_type == "cycle":
         sections = Section.objects.filter(
