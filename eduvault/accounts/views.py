@@ -18,7 +18,7 @@ def login_view(request):
         password = request.POST.get("password")
 
         if not user_id:
-            messages.error(request, "Enter ID")
+            messages.error(request, "Enter usn or staff  ID")
             return render(request, "login.html")
 
         user_id = user_id.strip()
@@ -72,7 +72,7 @@ def login_view(request):
         # -------------------------------
         # INVALID
         # -------------------------------
-        messages.error(request, "Invalid ID")
+        messages.error(request, "Invalid usn  or staff ID")
 
     return render(request, "login.html")
 
@@ -83,8 +83,3 @@ def logout_user(request):
 
     return redirect("/")
 
-def logout_user(request):
-
-    request.session.flush()
-
-    return redirect("/")
