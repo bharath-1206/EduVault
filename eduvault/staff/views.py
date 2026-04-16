@@ -153,7 +153,13 @@ def upload_material(request):
         try:
             subject = Subject.objects.get(id=subject_id)
 
-            if staff.role_type != "cycle":
+            # 🔐 CYCLE STAFF RESTRICTION
+            if staff.role_type == "cycle":
+                if subject.semester.number > 2:
+                    raise Exception("Cycle staff cannot upload branch subjects")
+
+            # 🔐 BRANCH STAFF RESTRICTION
+            elif staff.role_type != "hod":
                 if subject.branch != staff.branch:
                     raise Exception("Invalid subject")
 
@@ -203,12 +209,23 @@ def get_subjects(request):
     staff = get_staff(request)
     scheme_id = request.GET.get("scheme")
 
-    if staff.role_type == "cycle":
+    # 🔐 HOD → all subjects
+    if staff.role_type == "hod":
         subjects = Subject.objects.filter(scheme_id=scheme_id)
+
+    # 🔵 Cycle staff → ONLY sem 1 & 2
+    elif staff.role_type == "cycle":
+        subjects = Subject.objects.filter(
+            scheme_id=scheme_id,
+            semester__number__in=[1, 2]
+        )
+
+    # 🟢 Branch staff → ONLY their branch & sem > 2
     else:
         subjects = Subject.objects.filter(
             scheme_id=scheme_id,
-            branch=staff.branch
+            branch=staff.branch,
+            semester__number__gt=2
         )
 
     return JsonResponse(
@@ -223,8 +240,15 @@ def get_sections(request):
     staff = get_staff(request)
     scheme_id = request.GET.get("scheme")
 
-    if staff.role_type == "cycle":
+    if staff.role_type == "hod":
         sections = Section.objects.filter(scheme_id=scheme_id)
+
+    elif staff.role_type == "cycle":
+        sections = Section.objects.filter(
+            scheme_id=scheme_id,
+            branch__isnull=False  # optional safeguard
+        )
+
     else:
         sections = Section.objects.filter(
             scheme_id=scheme_id,
@@ -355,7 +379,9 @@ def edit_staff(request, id):
         new_password = request.POST.get("password")
 
         if new_password:
-            user = User.objects.get(username=target.staff_id)
+            user, created = User.objects.get_or_create(
+                username=target.staff_id
+            )
             user.set_password(new_password)
             user.save()
 
