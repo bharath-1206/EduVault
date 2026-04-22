@@ -22,7 +22,47 @@
 {{ message }} </div>
 {% endfor %}
 {% endif %}
+<form method="GET" class="row g-2 mb-3">
 
+    <div class="col-md-4">
+        <select name="scheme" class="form-select">
+            <option value="">Select Scheme</option>
+            {% for s in schemes %}
+                <option value="{{ s.id }}"
+                    {% if s.id|stringformat:"s" == selected_scheme %}selected{% endif %}>
+                    {{ s.year }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <select name="section" class="form-select">
+            <option value="">Select Section</option>
+
+            {% for sec in sections %}
+                <option value="{{ sec.id }}"
+                        {% if sec.id|stringformat:"s" == selected_section %}selected{% endif %}>
+                        {{ sec.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success w-100">
+            Filter
+        </button>
+    </div>
+
+    <div class="col-md-2">
+        <a href="/staff/hod/students/" class="btn btn-secondary w-100">
+            Reset
+        </a>
+    </div>
+
+</form>
 <div class="card p-3 mt-3">
 
 <table class="table table-bordered table-hover">
@@ -75,5 +115,48 @@ No students found
 </table>
 
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const schemeDropdown = document.querySelector("select[name='scheme']");
+    const sectionDropdown = document.querySelector("select[name='section']");
+
+    schemeDropdown.addEventListener("change", function () {
+
+        const schemeId = this.value;
+
+        // Reset section dropdown
+        sectionDropdown.innerHTML = '<option value="">Loading...</option>';
+
+        if (!schemeId) {
+            sectionDropdown.innerHTML = '<option value="">Select Section</option>';
+            return;
+        }
+
+        fetch(`/staff/get-sections/?scheme=${schemeId}`)
+            .then(response => response.json())
+            .then(data => {
+
+                sectionDropdown.innerHTML = '<option value="">Select Section</option>';
+
+                data.forEach(sec => {
+                    const option = document.createElement("option");
+                    option.value = sec.id;
+                    option.textContent = sec.name;
+                    sectionDropdown.appendChild(option);
+                });
+
+            })
+            .catch(error => {
+                console.error("Error loading sections:", error);
+                sectionDropdown.innerHTML = '<option value="">Error loading</option>';
+            });
+
+    });
+
+});
+</script>
 
 {% endblock %}

@@ -243,6 +243,10 @@ def get_sections(request):
     staff = get_staff(request)
     scheme_id = request.GET.get("scheme")
 
+    # 🔥 Prevent invalid query
+    if not scheme_id:
+        return JsonResponse([], safe=False)
+
     if staff.role_type == "hod":
         sections = Section.objects.filter(
             scheme_id=scheme_id,
@@ -252,7 +256,7 @@ def get_sections(request):
     elif staff.role_type == "cycle":
         sections = Section.objects.filter(
             scheme_id=scheme_id,
-            branch__isnull=False  # optional safeguard
+            branch__isnull=False
         )
 
     else:
@@ -262,7 +266,7 @@ def get_sections(request):
         )
 
     return JsonResponse(
-        [{"id": s.id, "name": str(s)} for s in sections],
+        [{"id": s.id, "name": s.name} for s in sections],
         safe=False
     )
 
@@ -274,9 +278,36 @@ def get_sections(request):
 def hod_students(request):
 
     staff = get_staff(request)
+
     students = Student.objects.filter(section__branch=staff.branch)
 
-    return render(request, "hod_students.html", {"students": students})
+    scheme_id = request.GET.get("scheme")
+    section_id = request.GET.get("section")
+
+    if scheme_id:
+        students = students.filter(scheme_id=scheme_id)
+
+    if section_id:
+        students = students.filter(section_id=section_id)
+
+    schemes = Scheme.objects.all()
+
+    # 🔥 KEY CHANGE HERE
+    if scheme_id:
+        sections = Section.objects.filter(
+            branch=staff.branch,
+            scheme_id=scheme_id
+        )
+    else:
+        sections = Section.objects.none()
+
+    return render(request, "hod_students.html", {
+        "students": students,
+        "schemes": schemes,
+        "sections": sections,
+        "selected_scheme": scheme_id,
+        "selected_section": section_id
+    })
 
 
 @login_required
