@@ -1,248 +1,210 @@
-# 📚 EduVault
+# 🎓 EduVault
 
-EduVault is a **Django-based academic resource management system** designed for colleges to manage, upload, and access study materials efficiently.
+**EduVault** is a secure, role-based academic material management system designed for colleges to efficiently manage, upload, and access study materials across departments and semesters.
 
 ---
 
-## 🚀 Features
+## 🚀 Overview
 
-### 👨‍🎓 Student Module
-- Login using **USN (no password required)**
-- Automatically detects:
-  - 📘 Scheme from USN  
-  - 🏫 Branch from USN  
-- View materials by:
+EduVault streamlines the distribution of academic resources by implementing a structured **Role-Based Access Control (RBAC)** system. It ensures that only authorized users can upload, view, or manage materials based on their role and academic structure.
+
+---
+
+## 🎯 Key Features
+
+### 🔐 Authentication & Security
+
+- Secure login using Django authentication system  
+- Password hashing and session management  
+- Role-based access control (RBAC)  
+
+### 👨‍🏫 Role-Based System
+
+#### **HOD (Head of Department)**
+- Manage staff  
+- Upload/view/delete branch materials  
+- View activity logs  
+
+#### **Branch Staff**
+- Access materials for their branch (Sem 3+)  
+- Upload subject-specific resources  
+
+#### **Cycle Staff**
+- Access common cycle materials (Sem 1 & 2)  
+
+#### **Students**
+- View materials based on their semester and branch  
+
+---
+
+## 📂 Material Management
+
+- Upload materials (PDFs, files)  
+- Organized by:  
+  - Branch  
   - Semester  
   - Subject  
-- Clean dashboard UI for easy navigation  
+- Cloud storage integration using **Cloudinary**  
+- Controlled visibility based on role + ownership  
 
 ---
 
-### 👨‍🏫 Staff Module
-- Login using **Staff ID + Password**
-- Admin-controlled access:
-  - ✅ Active → full access  
-  - ❌ Inactive → login blocked  
-- Upload materials:
-  - PDF, PPT, DOC supported  
-- Delete uploaded materials  
-- View materials filtered by branch  
+## 🧠 Smart Access Logic
+
+EduVault ensures:
+
+- Cycle materials (Sem 1 & 2) → Only cycle staff & relevant users  
+- Branch materials (Sem 3+) → Only branch staff & HOD  
+- HOD can access:  
+  - All branch materials  
+  - Materials uploaded by themselves  
 
 ---
 
-### 🔐 Authentication System
-- Hybrid login system:
-  - Students → direct login  
-  - Staff → password-based login  
-- Session-based authentication  
-- Auto logout system:
-  - Logs out after inactivity  
-  - Timer resets on user activity  
+## 📊 Activity Logging
+
+- Tracks system actions such as:  
+  - Uploads  
+  - Deletions  
+  - Logins  
+
+- Admin can:  
+  - View logs  
+  - Delete logs (controlled access)  
 
 ---
 
-### ☁️ File Storage
-- Integrated with **Cloudinary**
-- Supports:
-  - PDF  
-  - PPT / PPTX  
-  - DOC / DOCX  
-- Files are stored securely in the cloud  
-- No dependency on local `/media`  
+## 🖥️ User Interface
+
+- Clean dashboard UI using **Bootstrap**  
+- Sidebar navigation  
+- Responsive design  
+- Custom branding with logo integration  
 
 ---
 
-### 📊 Activity Logging System
-- Tracks all important actions:
-  - 📁 Material upload  
-  - ❌ Material deletion  
-  - 👨‍🎓 Student creation  
-- Stores:
-  - User type (admin/staff)  
-  - User ID  
-  - Action performed  
-  - Timestamp  
-- Accessible **only via Django Admin panel**
-- Logs are **read-only (cannot be modified/deleted)**  
+## ⚙️ Tech Stack
+
+| Layer      | Technology            |
+|------------|----------------------|
+| Backend    | Django 6             |
+| Frontend   | HTML, CSS, Bootstrap |
+| Database   | PostgreSQL / SQLite  |
+| Storage    | Cloudinary           |
+| Deployment | Render               |
+| Server     | Gunicorn + WhiteNoise|
 
 ---
 
-### 🛡️ Security Features
-- Staff account activation control  
-- Session protection (no direct URL access)  
-- Auto logout after inactivity  
-- Admin-only access to logs  
+## 🗂️ Project Structure
+
+```
+EduVault/
+│
+├── accounts/        # Authentication & activity logs  
+├── staff/           # Staff management & RBAC  
+├── students/        # Student data  
+├── materials/       # Material upload & access  
+├── academics/       # Subjects, semesters, branches  
+├── eduvault/        # Core settings & configuration  
+├── templates/       # HTML templates  
+├── static/          # Static files (logo, CSS)  
+```
 
 ---
 
-## 🏗️ Tech Stack
+## 🔧 Installation & Setup
 
-- **Backend:** Django (Python)  
-- **Database:** PostgreSQL (Render) / SQLite (local)  
-- **Frontend:** HTML, Bootstrap  
-- **Cloud Storage:** Cloudinary  
-- **Deployment:** Render  
-
----
-
-## ⚙️ Installation (Local Setup)
+### 1️⃣ Clone Repository
 
 ```bash
-# Clone repository
-git clone https://github.com/your-username/EduVault.git
-cd EduVault
+git clone https://github.com/your-repo/eduvault.git
+cd eduvault
+```
 
-# Create virtual environment
+### 2️⃣ Create Virtual Environment
+
+```bash
 python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+```
 
-# Activate environment
-# Windows
-.venv\Scripts\activate
+### 3️⃣ Install Dependencies
 
-# Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
-# Apply migrations
+### 4️⃣ Run Migrations
+
+```bash
 python manage.py makemigrations
 python manage.py migrate
-
-# Run server
-python manage.py runserver
-
-## 🔑 Admin Access
-
-Create a superuser:
-
-
-python manage.py createsuperuser
-
-Access the Django admin panel:
-
-http://127.0.0.1:8000/admin/
-👑 Admin Capabilities
 ```
-# 🎓 EduVault Admin Panel
 
-The admin panel provides full control over the system:
+### 5️⃣ Run Server
 
----
-
-## 🧑‍🎓 Student Management
-
-- Add new students manually  
-- Automatically detects:
-  - Scheme from USN  
-  - Branch from USN  
-- View and manage all registered students  
-
----
-
-## 👨‍🏫 Staff Management
-
-- Add new staff members  
-- Assign:
-  - Staff ID  
-  - Password  
-  - Branch  
-
-- Enable / Disable staff access:
-  - ✅ Active → can login  
-  - ❌ Inactive → login blocked  
-
----
-
-## 📚 Materials Management
-
-- View all uploaded materials  
-- Organized by:
-  - Subject  
-  - Branch  
-
-- Delete inappropriate or outdated materials  
-
----
-
-## 📊 Activity Logs (Audit System)
-
-- View all system activities in one place  
-
-### Tracks:
-- 📁 Material uploads  
-- ❌ Material deletions  
-- 👨‍🎓 Student registrations  
-
-### Displays:
-- User type (admin / staff)  
-- User ID  
-- Action performed  
-- Timestamp  
-
----
-
-## 🔒 Log Security
-
-- Logs are **read-only**  
-- Cannot be edited or deleted manually  
-- Only accessible through the admin panel  
-
----
-
-## 🔍 Admin Features
-
-- Search logs by user or action  
-
-### Filter logs by:
-- User type  
-- Date/time  
-
-- Sorted by latest activity  
-
----
-
-## 📂 Project Structure
-- EduVault/
--
-- ├── accounts/ # Authentication & logging
-- ├── students/ # Student model & logic
-- ├── staff/ # Staff dashboard & upload system
-- ├── materials/ # Study materials
-- ├── academics/ # Scheme, semester, subjects
-- ├-── templates/ # HTML templates
-- ├── static/ # CSS, JS
-- └── manage.py
+```bash
+python manage.py runserver
+```
 
 ---
 
 ## 🌐 Deployment
 
-- Deployed on **Render**  
-- Uses **PostgreSQL** database  
-- Media storage via **Cloudinary**  
-- Static files served using **WhiteNoise**  
+- Hosted on **Render**  
+- Uses:  
+  - PostgreSQL database  
+  - WhiteNoise for static files  
+  - Gunicorn for production server  
 
 ---
 
-## 🔥 Future Enhancements
+## 🎨 Branding
 
-- 🔍 Search materials  
-- 👁️ PDF preview inside dashboard  
-- 📊 Download analytics  
-- 🔐 Password hashing for staff  
-- 📱 Mobile responsive UI improvements  
-- 📅 Advanced log filtering  
+- Custom logo integrated across:  
+  - Login page  
+  - Dashboard  
+  - Browser favicon  
 
 ---
 
-## 👨‍💻 Author
+## 🔒 Security Highlights
 
-**Mohan Gowda B L**
-
----
-
-## 📜 License
-
-This project is for educational use.
+- Django built-in authentication  
+- Hashed passwords  
+- Session expiration handling  
+- Role-based access restrictions  
 
 ---
 
-⭐ If you like this project, consider giving it a star!
+## 📌 Future Enhancements
+
+- 🔄 Password reset via email  
+- 📱 Mobile optimization  
+- 📊 Analytics dashboard  
+- 🔔 Notifications system  
+- 📁 Version control for materials  
+
+---
+
+## 👨‍💻 Contributors
+
+- **Mohan Gowda B L**  
+- **Bharath M**  
+
+---
+
+## 📬 Contact
+
+📧 mohanrgbl6629@gmail.com  
+
+---
+
+## ⭐ Conclusion
+
+EduVault is designed to solve real-world academic material distribution challenges by combining **security, structure, and scalability** into a single platform.
+
+---
+
+> **“Structured access leads to efficient learning.”**  ``
