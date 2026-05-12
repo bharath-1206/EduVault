@@ -6,6 +6,9 @@ from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --------------------------------------------------
 # BASE DIRECTORY
@@ -22,7 +25,7 @@ SECRET_KEY = os.getenv(
     "django-insecure-fallback-key"
 )
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
