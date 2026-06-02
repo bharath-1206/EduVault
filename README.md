@@ -14,38 +14,45 @@ EduVault streamlines the distribution of academic resources by implementing a st
 
 ### 🔐 Authentication & Security
 
-- Secure login using Django authentication system  
-- Password hashing and session management  
-- Role-based access control (RBAC)  
+* Secure authentication and session management
+* Role-Based Access Control (RBAC)
+* Controlled academic access
+* Protected resource visibility
 
 ### 👨‍🏫 Role-Based System
 
 #### **HOD (Head of Department)**
-- Manage staff  
-- Upload/view/delete branch materials  
-- View activity logs  
+
+* Manage staff
+* Upload / view / delete branch materials
+* View activity logs
 
 #### **Branch Staff**
-- Access materials for their branch (Sem 3+)  
-- Upload subject-specific resources  
+
+* Access materials for assigned branch (Sem 3+)
+* Upload subject-specific resources
 
 #### **Cycle Staff**
-- Access common cycle materials (Sem 1 & 2)  
+
+* Access common cycle materials (Sem 1 & 2)
 
 #### **Students**
-- View materials based on their semester and branch  
+
+* View materials based on semester and branch
 
 ---
 
 ## 📂 Material Management
 
-- Upload materials (PDFs, files)  
-- Organized by:  
-  - Branch  
-  - Semester  
-  - Subject  
-- Cloud storage integration using **Cloudinary**  
-- Controlled visibility based on role + ownership  
+* Upload academic resources
+* PDF and file management
+* Organized by:
+
+  * Branch
+  * Semester
+  * Subject
+* Cloud media storage using Cloudinary
+* Controlled visibility using RBAC
 
 ---
 
@@ -53,62 +60,84 @@ EduVault streamlines the distribution of academic resources by implementing a st
 
 EduVault ensures:
 
-- Cycle materials (Sem 1 & 2) → Only cycle staff & relevant users  
-- Branch materials (Sem 3+) → Only branch staff & HOD  
-- HOD can access:  
-  - All branch materials  
-  - Materials uploaded by themselves  
+* Cycle materials (Sem 1 & 2) → Accessible only to cycle users
+* Branch materials (Sem 3+) → Controlled branch access
+* HOD access:
+
+  * All branch materials
+  * Self-uploaded materials
 
 ---
 
 ## 📊 Activity Logging
 
-- Tracks system actions such as:  
-  - Uploads  
-  - Deletions  
-  - Logins  
+Tracks:
 
-- Admin can:  
-  - View logs  
-  - Delete logs (controlled access)  
+* Uploads
+* Deletions
+* Logins
+
+Administrative controls:
+
+* View logs
+* Manage logs
 
 ---
 
 ## 🖥️ User Interface
 
-- Clean dashboard UI using **Bootstrap**  
-- Sidebar navigation  
-- Responsive design  
-- Custom branding with logo integration  
+* Bootstrap dashboard UI
+* Responsive design
+* Sidebar navigation
+* Custom branding
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Layer      | Technology            |
-|------------|----------------------|
+| Layer      | Technology           |
+| ---------- | -------------------- |
 | Backend    | Django 6             |
 | Frontend   | HTML, CSS, Bootstrap |
-| Database   | PostgreSQL / SQLite  |
+| Database   | Supabase PostgreSQL  |
 | Storage    | Cloudinary           |
-| Deployment | Render               |
-| Server     | Gunicorn + WhiteNoise|
+| Deployment | Railway              |
+| Server     | Gunicorn             |
+
+---
+
+## 🏗️ Architecture
+
+```text
+GitHub
+ ↓
+Railway
+ ↓
+Django
+ ↓
+Supabase PostgreSQL
+ ↓
+Cloudinary
+```
 
 ---
 
 ## 🗂️ Project Structure
 
-```
+```text
 EduVault/
 │
-├── accounts/        # Authentication & activity logs  
-├── staff/           # Staff management & RBAC  
-├── students/        # Student data  
-├── materials/       # Material upload & access  
-├── academics/       # Subjects, semesters, branches  
-├── eduvault/        # Core settings & configuration  
-├── templates/       # HTML templates  
-├── static/          # Static files (logo, CSS)  
+├── eduvault/
+│   ├── academics/
+│   ├── accounts/
+│   ├── staff/
+│   ├── students/
+│   ├── materials/
+│   ├── templates/
+│   ├── staticfiles/
+│   ├── eduvault/
+│   ├── manage.py
+│   └── requirements.txt
 ```
 
 ---
@@ -119,15 +148,32 @@ EduVault/
 
 ```bash
 git clone https://github.com/your-repo/eduvault.git
-cd eduvault
+cd EduVault/eduvault
 ```
+
+---
 
 ### 2️⃣ Create Virtual Environment
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
 ```
+
+Activate:
+
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux / Mac
+
+```bash
+source .venv/bin/activate
+```
+
+---
 
 ### 3️⃣ Install Dependencies
 
@@ -135,14 +181,43 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Run Migrations
+---
+
+### 4️⃣ Configure Environment Variables
+
+Create:
+
+```text
+.env
+```
+
+Add:
+
+```env
+DATABASE_URL=
+
+SECRET_KEY=
+
+DEBUG=True
+
+CLOUDINARY_CLOUD_NAME=
+
+CLOUDINARY_API_KEY=
+
+CLOUDINARY_API_SECRET=
+```
+
+---
+
+### 5️⃣ Run Migrations
 
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5️⃣ Run Server
+---
+
+### 6️⃣ Run Server
 
 ```bash
 python manage.py runserver
@@ -152,52 +227,59 @@ python manage.py runserver
 
 ## 🌐 Deployment
 
-- Hosted on **Render**  
-- Uses:  
-  - PostgreSQL database  
-  - WhiteNoise for static files  
-  - Gunicorn for production server  
+Hosted on Railway.
+
+Environment variables:
+
+```env
+DATABASE_URL=
+
+SECRET_KEY=
+
+DEBUG=False
+
+CLOUDINARY_CLOUD_NAME=
+
+CLOUDINARY_API_KEY=
+
+CLOUDINARY_API_SECRET=
+```
 
 ---
 
 ## 🎨 Branding
 
-- Custom logo integrated across:  
-  - Login page  
-  - Dashboard  
-  - Browser favicon  
+Custom branding includes:
+
+* Login page logo
+* Dashboard logo
+* Browser favicon
 
 ---
 
 ## 🔒 Security Highlights
 
-- Django built-in authentication  
-- Hashed passwords  
-- Session expiration handling  
-- Role-based access restrictions  
+* Session-based authentication
+* Role-based authorization
+* Environment isolation
+* Controlled resource access
 
 ---
 
 ## 📌 Future Enhancements
 
-- 🔄 Password reset via email  
-- 📱 Mobile optimization  
-- 📊 Analytics dashboard  
-- 🔔 Notifications system  
-- 📁 Version control for materials  
+* Password reset
+* Notifications
+* Mobile optimization
+* Analytics dashboard
+* Material versioning
 
 ---
 
 ## 👨‍💻 Contributors
 
-- **Mohan Gowda B L**  
-- **Bharath M**  
-
----
-
-## 📬 Contact
-
-📧 mohanrgbl6629@gmail.com  
+* Mohan Gowda B L
+* Bharath M
 
 ---
 
@@ -207,4 +289,4 @@ EduVault is designed to solve real-world academic material distribution challeng
 
 ---
 
-> **“Structured access leads to efficient learning.”**  ``
+> **"Structured access leads to efficient learning."**
