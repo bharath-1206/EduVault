@@ -227,7 +227,9 @@ python manage.py runserver
 
 ## 🌐 Deployment
 
-Hosted on Railway.
+EduVault is configured for deployment on Render as a Django Web Service. The project uses PostgreSQL through `DATABASE_URL`, WhiteNoise for static files, and Cloudinary for uploaded media.
+
+Render configuration is included in `render.yaml` and `eduvault/build.sh`.
 
 Environment variables:
 
@@ -243,7 +245,24 @@ CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 
 CLOUDINARY_API_SECRET=
+
+ALLOWED_HOSTS=
+CSRF_TRUSTED_ORIGINS=
 ```
+
+For a Render deployment, set `ALLOWED_HOSTS` to the Render hostname (for example, `eduvault.onrender.com`) and `CSRF_TRUSTED_ORIGINS` to the full HTTPS origin (for example, `https://eduvault.onrender.com`).
+
+### Render commands
+
+The repository contains a Render build script that installs dependencies, collects static files, and runs migrations. The web service starts with Gunicorn bound to Render's `$PORT`.
+
+A lightweight `/health/` endpoint is included for Render health checks and external uptime monitoring.
+
+### Keeping the free service awake
+
+Render Free web services normally spin down after 15 minutes without inbound traffic. This repository includes an optional GitHub Actions workflow at `.github/workflows/keep-render-awake.yml` that pings `/health/` every 10 minutes. Configure the repository secret `RENDER_HEALTH_URL` with the complete health URL.
+
+This is optional and consumes nearly all of the free monthly instance-hours when used continuously, so it is better suited to a demo/project deployment than a production service.
 
 ---
 

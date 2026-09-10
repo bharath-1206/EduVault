@@ -3,7 +3,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from materials.views import get_materials
+from .health import health_check
 urlpatterns = [
+    path('health/', health_check),
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
     path('student/', include('students.urls')),

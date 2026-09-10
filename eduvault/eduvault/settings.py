@@ -20,14 +20,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # --------------------------------------------------
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "django-insecure-fallback-key"
-)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = os.getenv("DEBUG") == "True"
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is not set.")
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    if host.strip()
+]
 
 # --------------------------------------------------
 # INSTALLED APPS
@@ -186,18 +190,24 @@ MEDIA_ROOT = BASE_DIR / "media"
 # CLOUDINARY STORAGE
 # --------------------------------------------------
 
+# Support both the existing variable names and the Cloudinary-prefixed
+# names used by the deployment configuration.
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME") or os.getenv("CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY") or os.getenv("API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET") or os.getenv("API_SECRET")
+
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.getenv("CLOUD_NAME"),
-    "API_KEY": os.getenv("API_KEY"),
-    "API_SECRET": os.getenv("API_SECRET"),
+    "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+    "API_KEY": CLOUDINARY_API_KEY,
+    "API_SECRET": CLOUDINARY_API_SECRET,
 }
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 cloudinary.config(
-    cloud_name=os.getenv("CLOUD_NAME"),
-    api_key=os.getenv("API_KEY"),
-    api_secret=os.getenv("API_SECRET"),
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
 )
 
 # --------------------------------------------------
@@ -205,8 +215,8 @@ cloudinary.config(
 # --------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Session timeout (10 minutes)
-SESSION_COOKIE_AGE = 120  # 600 seconds = 10 minutes
+# Session timeout (2 minutes)
+SESSION_COOKIE_AGE = 120
 
 # Expire session if browser closes
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -215,11 +225,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://eduvault-production-3a51.up.railway.app",
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
 ]
 
-ALLOWED_HOSTS = [
-    "eduvault-production-3a51.up.railway.app",
-    "127.0.0.1",
-    "localhost",
-]
+# Render terminates TLS at its edge and forwards the original protocol.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
