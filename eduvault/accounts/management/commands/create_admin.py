@@ -4,7 +4,7 @@ import os
 
 
 class Command(BaseCommand):
-    help = "Create an admin user from environment variables"
+    help = "Create or reset the temporary admin user"
 
     def handle(self, *args, **options):
         User = get_user_model()
@@ -19,18 +19,27 @@ class Command(BaseCommand):
             )
             return
 
-        if User.objects.filter(username=username).exists():
-            self.stdout.write(
-                self.style.WARNING(f"User '{username}' already exists.")
-            )
-            return
-
-        User.objects.create_superuser(
+        user, created = User.objects.get_or_create(
             username=username,
-            email=email,
-            password=password,
+            defaults={"email": email},
         )
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Superuser '{username}' created successfully.")
-        )
+        user.email = email
+        user.set_password(password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.save()
+
+        if created:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Superuser '{username}' created successfully."
+                )
+            )
+        else:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Existing user '{username}' upgraded and password reset successfully."
+                )
+            )
