@@ -305,8 +305,9 @@ Custom branding includes:
 
 ## 👨‍💻 Contributors
 
+**BHARATH M**
 * Mohan Gowda B L
-* Bharath M
+
 
 ---
 
