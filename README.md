@@ -10,6 +10,14 @@ EduVault streamlines the distribution of academic resources by implementing a st
 
 ---
 
+## "So, what is EduVault?"
+
+>**"EduVault is a role-based academic material management system I built to solve a problem I saw in how academic resources are distributed. Materials can end up scattered across different platforms, while different users—students, staff and administrators—need different levels of access.**
+
+>**So I built a centralized system where academic resources can be organized by branch, semester and subject, while access and actions are controlled according to the user's role. I also added activity logging for accountability and used Supabase for PostgreSQL data, Cloudinary for media storage, and deployed the application on Render.**
+
+>**The biggest thing I wanted to explore wasn't just building a Django application—it was understanding how authentication, authorization, resource management and deployment come together in a real application."**
+
 ## 🎯 Key Features
 
 ### 🔐 Authentication & Security
